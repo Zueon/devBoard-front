@@ -1,24 +1,44 @@
+import { formToJSON } from "axios";
 import React from "react";
 import { useState } from "react";
+import axios from "axios";
 
 const Signup = () => {
-  const [form, setForm] = useState({
-    username: "",
-    name: "",
-    email: "",
-    password: "",
-    pwConfirm: "",
-  });
+  // const [form, setForm] = useState({
+  //   username: "",
+  //   name: "",
+  //   email: "",
+  //   password: "",
+  //   pwConfirm: "",
+  // });
 
-  function updateForm(value) {
-    return setForm((prev) => {
-      return { ...prev, ...value };
+  // function updateForm(value) {
+  //   return setForm((prev) => {
+  //     return { ...prev, ...value };
+  //   });
+  // }
+
+  async function submitHandler(e) {
+    e.preventDefault();
+    console.log("click submit");
+
+    const form = new FormData(e.target);
+
+    const json = formToJSON(form);
+    console.log(json);
+
+    const response = await axios({
+      method: "post",
+      url: "http://localhost:8080/test/user",
+      data: json,
     });
+
+    console.log(response);
   }
 
   return (
     <div className="container mb-3">
-      <form className="border border-light p-5" action="#!">
+      <form className="border border-light p-5" onSubmit={submitHandler}>
         <p className="h4 mb-4">회원가입</p>
 
         <div className="form-row mb-4">
@@ -29,10 +49,6 @@ const Signup = () => {
               className="form-control"
               id="username"
               name="username"
-              value={form.username}
-              onChange={(e) => {
-                updateForm({ username: e.target.value });
-              }}
             />
           </div>
         </div>
@@ -100,6 +116,7 @@ const Signup = () => {
               type="text"
               className="form-control"
               placeholder="상세주소"
+              name="addrDetail"
             />
           </div>
         </div>
@@ -129,7 +146,7 @@ const Signup = () => {
         <div className="form-row mb-4">
           <div className="form-group col-md-4">
             <label htmlFor="gender">성별</label>
-            <select id="gender" className="form-control">
+            <select id="gender" className="form-control" name="gender">
               <option value="M" selected>
                 남
               </option>
@@ -138,7 +155,7 @@ const Signup = () => {
           </div>
         </div>
         <button className="btn btn-primary my-4 btn-block" type="submit">
-          Sign in
+          회원가입
         </button>
 
         <p>or sign up with:</p>
