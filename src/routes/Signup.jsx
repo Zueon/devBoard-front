@@ -127,9 +127,9 @@ const Signup = () => {
           </div>
         </div>
         <div className="form-row mb-4">
-          <div class="form-group col-md-4">
-            <label for="gender">성별</label>
-            <select id="gender" class="form-control">
+          <div className="form-group col-md-4">
+            <label htmlFor="gender">성별</label>
+            <select id="gender" className="form-control">
               <option value="M" selected>
                 남
               </option>
