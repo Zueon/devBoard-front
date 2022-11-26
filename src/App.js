@@ -5,6 +5,7 @@ import Home from "./routes/Home";
 import Login from "./routes/Login";
 import ProjectList from "./routes/project/ProjectList";
 import Signup from "./routes/Signup";
+import StudyList from "./routes/study/StudyList";
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/project/list" element={<ProjectList />} />
+        <Route path="/study/list" element={<StudyList />} />
       </Routes>
     </div>
   );

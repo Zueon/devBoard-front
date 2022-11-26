@@ -2,9 +2,9 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Paging from "../../components/Paging";
 
-import Projects from "../../components/Projects";
+import Studies from "../../components/Studies";
 
-const ProjectList = () => {
+const StudyList = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -14,12 +14,11 @@ const ProjectList = () => {
     const fetchData = async () => {
       setLoading(true);
       const response = await axios.get(
-        "http://localhost:8080/board/ProjectGet"
+        "https://jsonplaceholder.typicode.com/posts"
       );
       setPosts(response.data);
       setLoading(false);
     };
-
     fetchData();
   }, []);
 
@@ -33,8 +32,8 @@ const ProjectList = () => {
 
   return (
     <div>
-      <h1>프로젝트 리스트</h1>
-      <Projects posts={currentPosts(posts)} loading={loading} />
+      <h1>스터디 리스트</h1>
+      <Studies posts={currentPosts(posts)} loading={loading} />
       <Paging
         itemsCountPerPage={postsPerPage}
         totalItemsCount={posts.length}
@@ -45,4 +44,4 @@ const ProjectList = () => {
   );
 };
 
-export default ProjectList;
+export default StudyList;

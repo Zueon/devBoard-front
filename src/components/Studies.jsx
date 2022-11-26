@@ -1,16 +1,16 @@
 import React from "react";
 
-const Projects = ({ posts, loading }) => {
+const Studies = ({ posts, loading }) => {
   return (
     <div>
       {loading && <div>LOADING</div>}
       <ul>
         {posts.map((project) => (
-          <li key={project.project_id}>{project.title}</li>
+          <li key={project.id}>{project.title}</li>
         ))}
       </ul>
     </div>
   );
 };
 
-export default Projects;
+export default Studies;
