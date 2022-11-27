@@ -34,6 +34,7 @@ const ProjectList = () => {
   return (
     <div>
       <h1>프로젝트 리스트</h1>
+      <a href="/project/create">프로젝트 생성</a>
       <Projects posts={currentPosts(posts)} loading={loading} />
       <Paging
         itemsCountPerPage={postsPerPage}

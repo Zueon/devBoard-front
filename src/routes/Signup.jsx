@@ -1,36 +1,27 @@
 import { formToJSON } from "axios";
 import React from "react";
-import { useState } from "react";
 import axios from "axios";
 
 const Signup = () => {
-  // const [form, setForm] = useState({
-  //   username: "",
-  //   name: "",
-  //   email: "",
-  //   password: "",
-  //   pwConfirm: "",
-  // });
-
-  // function updateForm(value) {
-  //   return setForm((prev) => {
-  //     return { ...prev, ...value };
-  //   });
-  // }
-
   async function submitHandler(e) {
     e.preventDefault();
     console.log("click submit");
 
     const form = new FormData(e.target);
 
-    const json = formToJSON(form);
-    console.log(json);
+    const data = formToJSON(form);
+    console.log(data);
+
+    data["address"] =
+      data["city"] + " " + data["gu"] + " " + data["addrDetail"];
+
+    data["birth"] = data["year"] + "-" + data["month"] + "-" + data["day"];
+    console.log(data);
 
     const response = await axios({
       method: "post",
-      url: "http://localhost:8080/test/user",
-      data: json,
+      url: "http://localhost:8080/member/register",
+      data: data,
     });
 
     console.log(response);
@@ -43,13 +34,8 @@ const Signup = () => {
 
         <div className="form-row mb-4">
           <div className="col">
-            <label htmlFor="username">이름</label>
-            <input
-              type="text"
-              className="form-control"
-              id="username"
-              name="username"
-            />
+            <label htmlFor="name">이름</label>
+            <input type="text" className="form-control" id="name" name="name" />
           </div>
         </div>
 
@@ -130,16 +116,16 @@ const Signup = () => {
           </div>
           <div className="col">
             <select name="month" id="month" className="form-control">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
+              <option value="01">1</option>
+              <option value="02">2</option>
+              <option value="03">3</option>
             </select>
           </div>
           <div className="col">
             <select name="day" id="day" className="form-control">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
+              <option value="01">1</option>
+              <option value="02">2</option>
+              <option value="03">3</option>
             </select>
           </div>
         </div>
