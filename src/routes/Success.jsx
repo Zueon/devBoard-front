@@ -1,10 +1,12 @@
 import React from "react";
 import { Button, Result } from "antd";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const Success = () => {
   const location = useLocation();
-  const type = location.state.type;
+
+  const searchParams = new URLSearchParams(location.search);
+  const type = searchParams.get("type");
 
   const button =
     type === "계정"
@@ -17,7 +19,7 @@ const Success = () => {
         ]
       : [
           <Button type="primary" key="console">
-            {type}방으로
+            {type} 방으로
           </Button>,
           <Button key="buy">{type} 목록으로</Button>,
         ];

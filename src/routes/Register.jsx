@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { DatePicker, Button, Cascader, Form, Input, Select } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { locations } from "../AppConfig";
-import { call } from "../services/ApiService";
+import { call, signup } from "../services/ApiService";
 import { useNavigate } from "react-router-dom";
 
 const { Option } = Select;
@@ -55,11 +55,7 @@ const Register = () => {
       birth: formfields["birth"].format("YYYY-MM-DD"),
     };
 
-    call("/member/register", "POST", values).then((res) => {
-      console.log(res);
-      const type = "계정";
-      navigate("/success", { state: { type: type } });
-    });
+    signup(values);
   };
 
   return (
