@@ -3,7 +3,8 @@ import { locations } from "../AppConfig";
 import { Button, Form, Radio, Select, Input, DatePicker } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { call } from "../services/ApiService";
-import { formToJSON } from "axios";
+
+import { useNavigate } from "react-router-dom";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -52,6 +53,8 @@ const residences = locations.map((loc, idx) => (
 ));
 
 const Create = () => {
+  const navigate = useNavigate();
+
   const onFinish = (fieldsValue) => {
     const rangeValue = fieldsValue["range-picker"];
     const values = {
@@ -61,9 +64,11 @@ const Create = () => {
       category_: fieldsValue["category_"].join("/"),
     };
 
-    call("/board/ProjectCreate", "POST", values).then((res) =>
-      console.log(res)
-    );
+    call("/board/ProjectCreate", "POST", values).then((res) => {
+      console.log(res);
+      const type = "프로젝트";
+      navigate("/success", { state: { type: type } });
+    });
   };
 
   return (

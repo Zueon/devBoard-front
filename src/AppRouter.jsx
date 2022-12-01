@@ -9,6 +9,7 @@ import Study from "./routes/Study";
 import Login from "./routes/Login";
 import Register from "./routes/Register";
 import Create from "./components/Create";
+import Success from "./routes/Success";
 
 const AppRouter = () => {
   return (
@@ -22,6 +23,7 @@ const AppRouter = () => {
           <Route path="/study" element={<Study />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/success" element={<Success />} />
         </Routes>
       </Layout>
     </BrowserRouter>

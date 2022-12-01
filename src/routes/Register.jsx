@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { DatePicker, Button, Cascader, Form, Input, Select } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { locations } from "../AppConfig";
+import { call } from "../services/ApiService";
+import { useNavigate } from "react-router-dom";
 
 const { Option } = Select;
 
@@ -45,6 +47,7 @@ const residences = locations.map((loc, idx) => (
 
 const Register = () => {
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   const onFinish = (formfields) => {
     const values = {
@@ -52,13 +55,19 @@ const Register = () => {
       birth: formfields["birth"].format("YYYY-MM-DD"),
     };
 
-    console.log(values);
+    call("/member/register", "POST", values).then((res) => {
+      console.log(res);
+      const type = "계정";
+      navigate("/success", { state: { type: type } });
+    });
   };
 
   return (
     <Content
       style={{
-        padding: "50px 500px 50px 200px",
+        margin: "0 auto",
+        paddingTop: 50,
+        width: 500,
       }}
     >
       <Form
