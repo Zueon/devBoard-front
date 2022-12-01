@@ -9,7 +9,7 @@ import { call } from "../../services/ApiService";
 
 const { Content } = Layout;
 
-const List = ({ post }) => {
+const List = ({ posts }) => {
   return (
     <Layout>
       <Layout

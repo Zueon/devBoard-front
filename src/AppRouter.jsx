@@ -21,9 +21,7 @@ const AppRouter = () => {
           {["/project", "/study"].map((path, index) => (
             <Route path={path} element={<Project />} key={index} />
           ))}
-
           <Route path="/project/create" element={<Create />} />
-
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/success" element={<Success />} />
