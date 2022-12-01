@@ -34,11 +34,11 @@ const items2 = [UserOutlined, LaptopOutlined, NotificationOutlined].map(
 const Profile = () => {
   return (
     <Sider
-      width={300}
+      width={250}
       className="site-layout-background"
       style={{ backgroundColor: "#f5f5f5" }}
     >
-      <Card style={{ width: 300, height: 300 }} bordered={false}>
+      <Card style={{ width: "100%", height: 300 }} bordered={false}>
         <Image
           width={200}
           src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"

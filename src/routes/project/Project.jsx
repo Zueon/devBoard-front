@@ -1,34 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { Row } from "antd";
+import { Layout, Row } from "antd";
 
-import { Layout, Menu, Modal, Button } from "antd";
+import Paging from "../../components/Paging";
+import Profile from "../../components/Profile";
+import PostItem from "../../components/PostItem";
 
-import axios from "axios";
-import Paging from "../components/Paging";
+import { call } from "../../services/ApiService";
 
-import Profile from "../components/Profile";
-import PostItem from "../components/PostItem";
-
-const { Content, Sider } = Layout;
+const { Content } = Layout;
 
 const Project = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage, setPostsPerPage] = useState(9);
+  const [postsPerPage, setPostsPerPage] = useState(6);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      const response = await axios.get(
-        "https://jsonplaceholder.typicode.com/posts"
-      );
-      setPosts(response.data);
-      setLoading(false);
-      console.log(response.data);
-    };
-
-    fetchData();
+    // call("https://jsonplaceholder.typicode.com/posts", "GET", null).then(
+    //   (res) => {
+    //     setPosts(res.data);
+    //   }
+    // );
+    call("/board/ProjectGet", "GET", null).then((res) => {
+      console.log(res);
+      setPosts(res.data);
+    });
   }, []);
 
   const indexOfLast = currentPage * postsPerPage;
@@ -42,7 +38,7 @@ const Project = () => {
   const postItems =
     currentPosts(posts).length > 0 &&
     currentPosts(posts).map((post, idx) => (
-      <PostItem project={post} key={post.id} />
+      <PostItem project={post} key={post.project_id} />
     ));
 
   return (
