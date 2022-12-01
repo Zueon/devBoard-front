@@ -1,26 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { Layout, Row } from "antd";
-
-import Paging from "../../components/Paging";
-import Profile from "../../components/Profile";
-import PostItem from "../../components/PostItem";
-
-import { call } from "../../services/ApiService";
+import Paging from "./Paging";
+import Profile from "./Profile";
+import { call } from "../services/ApiService";
+import PostItem from "./PostItem";
+import { useLocation } from "react-router-dom";
 
 const { Content } = Layout;
 
-const Project = () => {
+const PostList = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostsPerPage] = useState(6);
 
+  const location = useLocation();
+  const path = location.pathname;
+
   useEffect(() => {
-    call("/board/project", "GET", null).then((res) => {
+    call(`/board${path}`, "GET", null).then((res) => {
       console.log(res);
       setPosts(res.data);
     });
-  }, []);
+  }, [path]);
 
   const indexOfLast = currentPage * postsPerPage;
   const indexOfFirst = indexOfLast - postsPerPage;
@@ -67,4 +69,4 @@ const Project = () => {
   );
 };
 
-export default Project;
+export default PostList;
