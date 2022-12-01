@@ -27,10 +27,3 @@ export const locations = [
   "경남",
   "제주",
 ];
-
-let residences = [];
-
-// locationLabels.forEach((v, idx) => {
-//   const newObj = { value: v, label: v };
-//   residences.push(newObj);
-// });

@@ -2,35 +2,10 @@ import { Card, Menu, Image } from "antd";
 import Sider from "antd/es/layout/Sider";
 import React from "react";
 
-import {
-  EditOutlined,
-  EllipsisOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
-import { Avatar } from "antd";
-import {
-  LaptopOutlined,
-  NotificationOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-const { Meta } = Card;
-const items2 = [UserOutlined, LaptopOutlined, NotificationOutlined].map(
-  (icon, index) => {
-    const key = String(index + 1);
-    return {
-      key: `sub${key}`,
-      icon: React.createElement(icon),
-      label: `subnav ${key}`,
-      children: new Array(4).fill(null).map((_, j) => {
-        const subKey = index * 4 + j + 1;
-        return {
-          key: subKey,
-          label: `option${subKey}`,
-        };
-      }),
-    };
-  }
-);
+import { signout } from "../services/ApiService";
+import RedBadge from "./RedBadge";
+const nickname = localStorage.getItem("NICKNAME");
+
 const Profile = () => {
   return (
     <Sider
@@ -38,30 +13,36 @@ const Profile = () => {
       className="site-layout-background"
       style={{ backgroundColor: "#f5f5f5" }}
     >
-      <Card style={{ width: "100%", height: 300 }} bordered={false}>
-      <a href="/profile/detail" title="회원정보">
-          <SettingOutlined
-            style={{
-              fontSize:"24px"
-            }}
-           />
-        </a>
-        <Image
-          width={200}
-          src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
-        />
-        
-      </Card>
+      <Card
+        style={{ width: "100%", height: 300 }}
+        bordered={false}
+        title={nickname}
+      ></Card>
       <Menu
         mode="inline"
-        defaultSelectedKeys={["1"]}
-        defaultOpenKeys={["sub1"]}
         style={{
           height: "100%",
           borderRight: 0,
         }}
-        items={items2}
-      />
+      >
+        <Menu.Item>
+          <a href={`/mypage/${nickname}`}>내 정보</a>
+        </Menu.Item>
+
+        <Menu.SubMenu title={<RedBadge status={true} />}>
+          <Menu.Item>샘플 알람1</Menu.Item>
+          <Menu.Item>샘플 알람2</Menu.Item>
+        </Menu.SubMenu>
+
+        <Menu.SubMenu title="프로젝트">
+          <Menu.Item>현재 프로젝트 </Menu.Item>
+          <Menu.Item>새 프로젝트 생성하기</Menu.Item>
+        </Menu.SubMenu>
+        <Menu.SubMenu title="스터디">
+          <Menu.Item>현재 스터디 </Menu.Item>
+          <Menu.Item>새 스터디 생성하기</Menu.Item>
+        </Menu.SubMenu>
+      </Menu>
     </Sider>
   );
 };
