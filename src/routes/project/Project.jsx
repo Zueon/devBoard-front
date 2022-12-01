@@ -16,12 +16,7 @@ const Project = () => {
   const [postsPerPage, setPostsPerPage] = useState(6);
 
   useEffect(() => {
-    // call("https://jsonplaceholder.typicode.com/posts", "GET", null).then(
-    //   (res) => {
-    //     setPosts(res.data);
-    //   }
-    // );
-    call("/board/ProjectGet", "GET", null).then((res) => {
+    call("/board/project", "GET", null).then((res) => {
       console.log(res);
       setPosts(res.data);
     });
@@ -38,7 +33,7 @@ const Project = () => {
   const postItems =
     currentPosts(posts).length > 0 &&
     currentPosts(posts).map((post, idx) => (
-      <PostItem project={post} key={post.project_id} />
+      <PostItem post={post} key={post.project_id} />
     ));
 
   return (

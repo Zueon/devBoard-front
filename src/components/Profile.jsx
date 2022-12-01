@@ -38,21 +38,13 @@ const Profile = () => {
       className="site-layout-background"
       style={{ backgroundColor: "#f5f5f5" }}
     >
-      <Card style={{ width: "100%", height: 300 }} bordered={false}>
-        <Image
-          width={200}
-          src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
-        />
-      </Card>
+      <Card style={{ width: "100%", height: 300 }} bordered={false}></Card>
       <Menu
         mode="inline"
-        defaultSelectedKeys={["1"]}
-        defaultOpenKeys={["sub1"]}
         style={{
           height: "100%",
           borderRight: 0,
         }}
-        items={items2}
       />
     </Sider>
   );

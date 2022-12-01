@@ -18,9 +18,12 @@ const AppRouter = () => {
         <Nav />
         <Routes>
           <Route path="/" element={<App />} />
-          <Route path="/project" element={<Project />} />
+          {["/project", "/study"].map((path, index) => (
+            <Route path={path} element={<Project />} key={index} />
+          ))}
+
           <Route path="/project/create" element={<Create />} />
-          <Route path="/study" element={<Study />} />
+
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/success" element={<Success />} />
