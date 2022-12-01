@@ -39,10 +39,18 @@ const Profile = () => {
       style={{ backgroundColor: "#f5f5f5" }}
     >
       <Card style={{ width: "100%", height: 300 }} bordered={false}>
+      <a href="/profile/detail" title="회원정보">
+          <SettingOutlined
+            style={{
+              fontSize:"24px"
+            }}
+           />
+        </a>
         <Image
           width={200}
           src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
         />
+        
       </Card>
       <Menu
         mode="inline"

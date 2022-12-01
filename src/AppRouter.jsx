@@ -10,6 +10,7 @@ import Login from "./routes/Login";
 import Register from "./routes/Register";
 import Create from "./components/Create";
 import Success from "./routes/Success";
+import ProfileGet from "./routes/ProfileGet";
 
 const AppRouter = () => {
   return (
@@ -24,6 +25,7 @@ const AppRouter = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/success" element={<Success />} />
+          <Route path="/profile/detail" element={<ProfileGet />} />
         </Routes>
       </Layout>
     </BrowserRouter>
