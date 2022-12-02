@@ -26,7 +26,7 @@ const Profile = () => {
         }}
       >
         <Menu.Item>
-          <a href={`/mypage/${nickname}`}>내 정보</a>
+          <a href={`/profile/detail`}>내 정보</a>
         </Menu.Item>
 
         <Menu.SubMenu title={<RedBadge status={true} />}>

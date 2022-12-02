@@ -1,42 +1,50 @@
-import React from "react";
-// const ProfileDetailStyle ={
-//     display: "block",
-//     margin-inline-start: "2px",
-//     margin-inline-end: "2px",
-//     padding-block-start: "0.35em",
-//     padding-inline-start: "0.75em",
-//     padding-inline-end: "0.75em",
-//     padding-block-end: "0.625em",
-//     min-inline-size: "min-content";
-// }
+import React from 'react';
+import {Descriptions} from 'antd';
 
-const ProfileDetail=({posts})=>{
-    return(
-        <div>
-            <dl>
-            <dt>
-                e-mail
-            </dt>
-            <dd>
-                {posts.email}
-            </dd>
-            <div>
-                <label for="nickname">닉네임</label><input type="text" value={posts.nickname} readonly/>
-            </div>
-            <div>
-                <label for="name">성함</label><input type="text" value={posts.name} readonly/>
-            </div>
-            <div>
-                <label for="gender">성별</label><input type="text" value={posts.gender} readonly/>
-            </div>
-            <div>
-                <label for="birth">생년월일</label><input type="text" value={posts.birth} readonly/>
-            </div>
-                {posts.project_board === "" && <div><label for="project">현재참여중인 프로젝트</label><span>{posts.project_board}</span></div>}
-                {posts.project_board === "" && <div><label for="study">현재참여중인 스터디그룹</label><span>{posts.project_board}</span></div>}
-            </dl>            
-        </div>
 
-    )
-}
+
+const ProfileDetail = ({posts}) => (
+  <Descriptions title="회원정보" bordered column={1}>
+    <Descriptions.Item label="닉네임">{posts.nickname}</Descriptions.Item>
+    <Descriptions.Item label="이름">{posts.name}</Descriptions.Item>
+    <Descriptions.Item label="생년월일">{posts.birth}</Descriptions.Item>
+    <Descriptions.Item label="성별">{posts.gender}</Descriptions.Item>
+    <Descriptions.Item label="주소">{posts.address}</Descriptions.Item>
+    {posts.project_board === "" && 
+        <Descriptions.Item label="프로젝트Room">
+        Data disk type: MongoDB
+          <br />
+          Database version: 3.4
+          <br />
+          Package: dds.mongo.mid
+          <br />
+          Storage space: 10 GB
+          <br />
+          Replication factor: 3
+          <br />
+          Region: East China 1
+          <br />
+        </Descriptions.Item>
+    }
+    {posts.project_board === "" && 
+        <Descriptions.Item label="스터디Room">
+        Data disk type: MongoDB
+        <br />
+        Database version: 3.4
+        <br />
+        Package: dds.mongo.mid
+        <br />
+        Storage space: 10 GB
+        <br />
+        Replication factor: 3
+        <br />
+        Region: East China 1
+        <br />
+   </Descriptions.Item>
+    }
+    
+   
+  </Descriptions>
+);
 export default ProfileDetail;
+
