@@ -12,6 +12,7 @@ import Create from "./components/Create";
 import Success from "./routes/Success";
 
 import PostList from "./components/PostList";
+import TestPage from "./components/TestPage";
 
 const AppRouter = () => {
   return (
@@ -27,6 +28,7 @@ const AppRouter = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/success" element={<Success />} />
+          <Route path="/test" element={<TestPage />} />
         </Routes>
       </Layout>
     </BrowserRouter>

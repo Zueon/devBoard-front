@@ -1,12 +1,19 @@
-import { Card, Menu, Image } from "antd";
+import { Card, Menu, Image, Button } from "antd";
 import Sider from "antd/es/layout/Sider";
-import React from "react";
+import axios from "axios";
+import React, { useEffect } from "react";
 
-import { signout } from "../services/ApiService";
+import { call, signout } from "../services/ApiService";
 import RedBadge from "./RedBadge";
-const nickname = localStorage.getItem("NICKNAME");
+const nickname = sessionStorage.getItem("NICKNAME");
 
 const Profile = () => {
+  const count = () => {
+    call(`/board/project/20/23`, "POST", {
+      password: "123",
+      email: "email1@google.com",
+    });
+  };
   return (
     <Sider
       width={250}
@@ -17,7 +24,10 @@ const Profile = () => {
         style={{ width: "100%", height: 300 }}
         bordered={false}
         title={nickname}
-      ></Card>
+      >
+        <Button onClick={signout}>Logout</Button>
+        <Button onClick={count}>count</Button>
+      </Card>
       <Menu
         mode="inline"
         style={{

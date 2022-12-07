@@ -2,16 +2,16 @@ import axios from "axios";
 const { API_BASE_URL } = require("../AppConfig");
 const ACCESS_TOKEN = "ACCESS_TOKEN";
 const NICKNAME = "NICKNAME";
-
 export const call = async (api, method, request) => {
   try {
-    const accessToken = localStorage.getItem("ACCESS_TOKEN");
+    const accessToken = sessionStorage.getItem("ACCESS_TOKEN");
+
     const options = {
       method: method,
       url: API_BASE_URL + api,
-      headers: new Headers({
+      headers: {
         "Content-Type": "application/json",
-      }),
+      },
     };
 
     // 요청 바디가 존재하는 경우에 옵션의 data 속석으로 해당 내용들을 넣어준다.
@@ -37,15 +37,19 @@ export async function signin(member) {
   const accessToken = response.data.token;
   console.log(response);
   if (accessToken) {
-    localStorage.setItem(ACCESS_TOKEN, accessToken);
-    localStorage.setItem("NICKNAME", response.data.nickname);
+    sessionStorage.setItem(ACCESS_TOKEN, accessToken);
+    sessionStorage.setItem("NICKNAME", response.data.nickname);
+    sessionStorage.setItem("MID", response.data.mid);
+
     window.location = "/";
   }
 }
 
 export function signout() {
-  localStorage.setItem(ACCESS_TOKEN, null);
-  localStorage.setItem(NICKNAME, null);
+  sessionStorage.setItem(ACCESS_TOKEN, null);
+  sessionStorage.setItem(NICKNAME, null);
+  sessionStorage.setItem("MID", null);
+
   window.location.href = "/login";
 }
 

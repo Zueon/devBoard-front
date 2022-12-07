@@ -6,6 +6,9 @@ import { call } from "../services/ApiService";
 
 import { useNavigate } from "react-router-dom";
 
+const nickname = sessionStorage.getItem("NICKNAME");
+const mid = sessionStorage.getItem("MID");
+
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const formItemLayout = {
@@ -54,6 +57,7 @@ const residences = locations.map((loc, idx) => (
 
 const Create = () => {
   const navigate = useNavigate();
+  console.log(nickname);
 
   const onFinish = (fieldsValue) => {
     const rangeValue = fieldsValue["range-picker"];
@@ -62,18 +66,34 @@ const Create = () => {
       enddate: rangeValue[1].format("YYYY-MM-DD"),
       startdate: rangeValue[0].format("YYYY-MM-DD"),
       category_: fieldsValue["category_"].join("/"),
+      nickname: nickname,
+      hostId: mid,
+      type: "PROJECT",
     };
+    console.log(values);
 
-    call("/board/ProjectCreate", "POST", values).then((res) => {
+    call("/board", "POST", values).then((res) => {
       console.log(res);
-      const type = "프로젝트";
-      navigate("/success", { state: { type: type } });
+      // const type = "프로젝트";
+      // navigate("/success", { state: { type: type } });
     });
   };
 
   return (
     <Content style={{ padding: 50 }}>
       <Form name="validate_other" {...formItemLayout} onFinish={onFinish}>
+        <Form.Item
+          name="writer"
+          label="방장"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+          initialValue={nickname}
+        >
+          <Input disabled />
+        </Form.Item>
         <Form.Item
           name="title"
           label="프로젝트 방 이름"

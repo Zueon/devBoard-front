@@ -52,7 +52,6 @@ const Register = () => {
   const onFinish = (formfields) => {
     const values = {
       ...formfields,
-      birth: formfields["birth"].format("YYYY-MM-DD"),
     };
 
     signup(values);
@@ -159,18 +158,6 @@ const Register = () => {
           <Input />
         </Form.Item>
 
-        <Form.Item
-          name="birth"
-          label="생년월일"
-          rules={[
-            {
-              required: true,
-              message: "성별을 입력하세요",
-            },
-          ]}
-        >
-          <DatePicker />
-        </Form.Item>
         <Form.Item
           name="address"
           label="거주지역"
