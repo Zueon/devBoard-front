@@ -1,52 +1,11 @@
 import React, { useState } from "react";
-import { Button, Cascader, Form, Input, Select } from "antd";
+import { DatePicker, Button, Cascader, Form, Input, Select } from "antd";
 import { Content } from "antd/es/layout/layout";
+import { locations } from "../AppConfig";
+import { call, signup } from "../services/ApiService";
+import { useNavigate } from "react-router-dom";
 
 const { Option } = Select;
-const locationValues = [
-  "Seoul",
-  "Busan",
-  "Daegu",
-  "Gwangju",
-  "Daejeon",
-  "Ulsan",
-  "Sejong",
-  "Gyeongi",
-  "Gangwon",
-  "Chungbuk",
-  "Chungnam",
-  "Jeonbuk",
-  "Jeonnam",
-  "Gyeongnam",
-  "Gyeongbuk",
-  "Jeju",
-];
-const locationLabels = [
-  "서울",
-  "부산",
-  "대구",
-  "대전",
-  "울산",
-  "세종",
-  "경기",
-  "강원",
-  "충북",
-  "충남",
-  "전북",
-  "전남",
-  "경북",
-  "경남",
-  "제주",
-];
-
-let residences = [];
-
-locationValues.forEach((v, idx) => {
-  const newObj = { value: v, label: locationLabels[idx] };
-  residences.push(newObj);
-});
-
-console.log(residences);
 
 const formItemLayout = {
   labelCol: {
@@ -80,30 +39,30 @@ const tailFormItemLayout = {
   },
 };
 
+const residences = locations.map((loc, idx) => (
+  <Option value={loc} key={idx}>
+    {loc}
+  </Option>
+));
+
 const Register = () => {
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
-  const onFinish = (values) => {
-    console.log("Received values of form: ", values);
+  const onFinish = (formfields) => {
+    const values = {
+      ...formfields,
+    };
+
+    signup(values);
   };
-
-  const prefixSelector = (
-    <Form.Item name="prefix" noStyle>
-      <Select
-        style={{
-          width: 70,
-        }}
-      >
-        <Option value="86">+86</Option>
-        <Option value="87">+87</Option>
-      </Select>
-    </Form.Item>
-  );
 
   return (
     <Content
       style={{
-        padding: "50px 500px 50px 200px",
+        margin: "0 auto",
+        paddingTop: 50,
+        width: 500,
       }}
     >
       <Form
@@ -116,6 +75,18 @@ const Register = () => {
         }}
         scrollToFirstError
       >
+        <Form.Item
+          name="name"
+          label="name"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+
         <Form.Item
           name="email"
           label="E-mail"
@@ -188,48 +159,16 @@ const Register = () => {
         </Form.Item>
 
         <Form.Item
-          name="residence"
+          name="address"
           label="거주지역"
           rules={[
             {
-              type: "array",
               required: true,
               message: "주소를 입력하세요",
             },
           ]}
         >
-          <Cascader options={residences} />
-        </Form.Item>
-
-        <Form.Item
-          name="phone"
-          label="Phone Number"
-          rules={[
-            {
-              required: true,
-              message: "전화번호를 입력하세요",
-            },
-          ]}
-        >
-          <Input
-            addonBefore={prefixSelector}
-            style={{
-              width: "100%",
-            }}
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="intro"
-          label="Intro"
-          rules={[
-            {
-              required: true,
-              message: "자기소개를 입력하세요",
-            },
-          ]}
-        >
-          <Input.TextArea showCount maxLength={100} />
+          <Select>{residences}</Select>
         </Form.Item>
 
         <Form.Item
@@ -243,9 +182,8 @@ const Register = () => {
           ]}
         >
           <Select placeholder="select your gender">
-            <Option value="male">Male</Option>
-            <Option value="female">Female</Option>
-            <Option value="other">Other</Option>
+            <Option value="M">Male</Option>
+            <Option value="F">Female</Option>
           </Select>
         </Form.Item>
 
