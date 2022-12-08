@@ -3,6 +3,7 @@ import { Button, Card, Col, Modal, Tag, message } from "antd";
 import { call } from "../services/ApiService";
 
 const mid = sessionStorage.getItem("MID");
+const nickname = sessionStorage.getItem("NICKNAME");
 
 const PostItem = ({ post }) => {
   const [open, setOpen] = useState(false);
@@ -11,7 +12,7 @@ const PostItem = ({ post }) => {
   const success = () => {
     messageApi.open({
       type: "success",
-      content: `${post.writer}님에게 참가 신청을 전송하였습니다!`,
+      content: `참가 신청을 전송하였습니다!`,
     });
   };
 
@@ -28,8 +29,11 @@ const PostItem = ({ post }) => {
     console.log(post.pid);
     console.log(post.hostId);
     call(`/board/project/${post.pid}/${mid}`, "POST", {
-      content: "test content",
-      type: "PROJECT",
+      sender: nickname,
+      content: `${nickname}이 신청요청을 보냈습니다!`,
+      type: "APPLY",
+    }).then((res) => {
+      console.log(res);
     });
     success();
     setOpen(false);
