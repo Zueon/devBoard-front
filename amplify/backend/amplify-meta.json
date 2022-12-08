@@ -1,0 +1,58 @@
+{
+  "providers": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-antdemo-dev-145500-authRole",
+      "UnauthRoleArn": "arn:aws:iam::503237308475:role/amplify-antdemo-dev-145500-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::503237308475:role/amplify-antdemo-dev-145500-authRole",
+      "Region": "ap-southeast-1",
+      "DeploymentBucketName": "amplify-antdemo-dev-145500-deployment",
+      "UnauthRoleName": "amplify-antdemo-dev-145500-unauthRole",
+      "StackName": "amplify-antdemo-dev-145500",
+      "StackId": "arn:aws:cloudformation:ap-southeast-1:503237308475:stack/amplify-antdemo-dev-145500/88823ce0-7073-11ed-b30a-0a30ff641266",
+      "AmplifyAppId": "d39iljsd3pzvnn"
+    }
+  },
+  "auth": {
+    "antdemo96901a0a": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false,
+      "frontendAuthConfig": {
+        "socialProviders": [],
+        "usernameAttributes": [
+          "EMAIL"
+        ],
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyMinLength": 8,
+          "passwordPolicyCharacters": []
+        },
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-antdemo-dev-145500-deployment/amplify-cfn-templates/auth/antdemo96901a0a-cloudformation-template.json",
+        "logicalId": "authantdemo96901a0a"
+      },
+      "lastPushTimeStamp": "2022-11-30T06:16:51.102Z",
+      "output": {
+        "UserPoolId": "ap-southeast-1_0marU0F5F",
+        "AppClientIDWeb": "3rtp5pkhdn9a92d8g4pouu40n1",
+        "AppClientID": "3hkg0b28ltm4fvo06bjmldrrv8",
+        "IdentityPoolId": "ap-southeast-1:dd3d6694-e26a-4815-bc29-907066ce26cf",
+        "UserPoolArn": "arn:aws:cognito-idp:ap-southeast-1:503237308475:userpool/ap-southeast-1_0marU0F5F",
+        "IdentityPoolName": "antdemo96901a0a_identitypool_96901a0a__dev",
+        "UserPoolName": "antdemo96901a0a_userpool_96901a0a"
+      },
+      "lastPushDirHash": "OVTz0bTLJphZnvB1nu29J5dsddk="
+    }
+  }
+}
