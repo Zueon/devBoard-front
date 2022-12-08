@@ -1,7 +1,39 @@
 import axios from "axios";
+import { createRef } from "react";
 const { API_BASE_URL } = require("../AppConfig");
 const ACCESS_TOKEN = "ACCESS_TOKEN";
 const NICKNAME = "NICKNAME";
+
+export function AuthenticatedLink({ url, filename, children }) {
+  const link = createRef();
+  const accessToken = localStorage.getItem("ACCESS_TOKEN");
+  const handleAction = async () => {
+    if (link.current.href) {
+      return;
+    }
+
+    const result = await fetch(url, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    const blob = await result.blob();
+    const href = window.URL.createObjectURL(blob);
+
+    link.current.download = filename;
+    link.current.href = href;
+
+    link.current.click();
+  };
+
+  return (
+    <>
+      <a role="button" ref={link} onClick={handleAction}>
+        {children}
+      </a>
+    </>
+  );
+}
+
 export const call = async (api, method, request) => {
   try {
     const accessToken = sessionStorage.getItem("ACCESS_TOKEN");

@@ -13,6 +13,7 @@ import Success from "./routes/Success";
 
 import PostList from "./components/PostList";
 import TestPage from "./components/TestPage";
+import ProfileGet from "./routes/ProfileGet";
 
 const AppRouter = () => {
   return (
@@ -27,7 +28,8 @@ const AppRouter = () => {
           {["/project/create", "/study/create"].map((path, index) => (
             <Route path={path} element={<Create />} key={index} />
           ))}
-          <Route path="/project/create" element={<Create />} />
+
+          <Route path="/profile/detail" element={<ProfileGet />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/success" element={<Success />} />
