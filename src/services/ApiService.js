@@ -1,7 +1,38 @@
 import axios from "axios";
+import { createRef } from "react";
 const { API_BASE_URL } = require("../AppConfig");
 const ACCESS_TOKEN = "ACCESS_TOKEN";
 const NICKNAME = "NICKNAME";
+
+export function AuthenticatedLink({ url, filename, children }) {
+  const link = createRef();
+  const accessToken = localStorage.getItem("ACCESS_TOKEN");
+  const handleAction = async () => {
+    if (link.current.href) {
+      return;
+    }
+
+    const result = await fetch(url, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    const blob = await result.blob();
+    const href = window.URL.createObjectURL(blob);
+
+    link.current.download = filename;
+    link.current.href = href;
+
+    link.current.click();
+  };
+
+  return (
+    <>
+      <a role="button" ref={link} onClick={handleAction}>
+        {children}
+      </a>
+    </>
+  );
+}
 
 export const call = async (api, method, request) => {
   try {
@@ -9,9 +40,10 @@ export const call = async (api, method, request) => {
     const options = {
       method: method,
       url: API_BASE_URL + api,
-      headers: new Headers({
+      headers: {
         "Content-Type": "application/json",
-      }),
+        "Access-Control-Allow-Origin": "*",
+      },
     };
 
     // 요청 바디가 존재하는 경우에 옵션의 data 속석으로 해당 내용들을 넣어준다.
@@ -22,7 +54,7 @@ export const call = async (api, method, request) => {
     }
 
     const response = await axios(options);
-
+    console.log(response);
     return response;
   } catch (error) {
     console.log(error);
