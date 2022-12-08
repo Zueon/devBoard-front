@@ -44,7 +44,9 @@ const Profile = () => {
     if (token !== "null") {
       let eventSource = new EventSource(subscribeUrl + "?token=" + token);
 
-      eventSource.addEventListener("connect", function (event) {});
+      eventSource.addEventListener("connect", function (event) {
+        alert(event);
+      });
 
       eventSource.addEventListener("apply", function (event) {
         let message = JSON.parse(event.data);

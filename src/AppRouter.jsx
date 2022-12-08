@@ -14,6 +14,7 @@ import Success from "./routes/Success";
 import PostList from "./components/PostList";
 import TestPage from "./components/TestPage";
 import ProfileGet from "./routes/ProfileGet";
+import Workspace from "./routes/Workspace";
 
 const AppRouter = () => {
   return (
@@ -30,6 +31,7 @@ const AppRouter = () => {
           ))}
 
           <Route path="/profile/detail" element={<ProfileGet />} />
+          <Route path="/myWorkspace" element={<Workspace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/success" element={<Success />} />
