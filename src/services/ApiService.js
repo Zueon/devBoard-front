@@ -36,13 +36,13 @@ export function AuthenticatedLink({ url, filename, children }) {
 
 export const call = async (api, method, request) => {
   try {
-    const accessToken = localStorage.getItem("ACCESS_TOKEN");
+    const accessToken = sessionStorage.getItem("ACCESS_TOKEN");
+
     const options = {
       method: method,
       url: API_BASE_URL + api,
       headers: {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
       },
     };
 
@@ -69,15 +69,19 @@ export async function signin(member) {
   const accessToken = response.data.token;
   console.log(response);
   if (accessToken) {
-    localStorage.setItem(ACCESS_TOKEN, accessToken);
-    localStorage.setItem("NICKNAME", response.data.nickname);
+    sessionStorage.setItem(ACCESS_TOKEN, accessToken);
+    sessionStorage.setItem("NICKNAME", response.data.nickname);
+    sessionStorage.setItem("MID", response.data.mid);
+
     window.location = "/";
   }
 }
 
 export function signout() {
-  localStorage.setItem(ACCESS_TOKEN, null);
-  localStorage.setItem(NICKNAME, null);
+  sessionStorage.setItem(ACCESS_TOKEN, null);
+  sessionStorage.setItem(NICKNAME, null);
+  sessionStorage.setItem("MID", null);
+
   window.location.href = "/login";
 }
 

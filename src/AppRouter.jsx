@@ -13,6 +13,7 @@ import Success from "./routes/Success";
 import ProfileGet from "./routes/ProfileGet";
 
 import PostList from "./components/PostList";
+import TestPage from "./components/TestPage";
 
 const AppRouter = () => {
   return (
@@ -29,6 +30,7 @@ const AppRouter = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/success" element={<Success />} />
           <Route path="/profile/detail" element={<ProfileGet />} />
+          <Route path="/test" element={<TestPage />} />
         </Routes>
       </Layout>
     </BrowserRouter>
