@@ -1,7 +1,6 @@
 import React,{useState} from 'react';
 import { Input,Form, Select, Button,Upload, List} from 'antd';
 import { Option } from 'antd/es/mentions';
-import { UploadOutlined } from '@ant-design/icons';
 import { locations } from '../AppConfig';
 import { AuthenticatedLink } from '../services/ApiService';
 import { InboxOutlined, CloseOutlined} from '@ant-design/icons';
@@ -40,7 +39,6 @@ const deletefile = async (filename, idx) => {
 const ProfileDetail = () => {
 
   const [posts, setPosts] = useState([]);
-  const [files, setFiles] = useState([]);
   
 
   useEffect(() => {
@@ -49,7 +47,6 @@ const ProfileDetail = () => {
         `/auth/getMember`,"GET",null
       ).then((res)=>{
         setPosts(res.data);
-        setFiles(res.data.infofile);
         
       });
     };
@@ -60,7 +57,7 @@ const ProfileDetail = () => {
 
 
 
-  const fileList = files.map((item,index) => 
+  const fileList = posts["infoFiles"].map((item,index) => 
     <List.Item key={index}>
       <AuthenticatedLink url={API_BASE_URL+'/file/download?filename='+item.fileName} filename={item.fileName}>
         {item.fileName}
