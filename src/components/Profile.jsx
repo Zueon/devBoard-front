@@ -1,42 +1,38 @@
 import { Card, Menu, Modal, Button } from "antd";
 import Sider from "antd/es/layout/Sider";
-import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { call, signout } from "../services/ApiService";
 import RedBadge from "./RedBadge";
 const nickname = sessionStorage.getItem("NICKNAME");
+let token = sessionStorage.getItem("ACCESS_TOKEN");
 
 const Profile = () => {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   const connect = () => {
     let subscribeUrl = "http://localhost:8080/sub";
-    if (sessionStorage.getItem("ACCESS_TOKEN") != null) {
-      let token = sessionStorage.getItem("ACCESS_TOKEN");
+    if (token != null) {
       let eventSource = new EventSource(subscribeUrl + "?token=" + token);
 
-      eventSource.addEventListener("connect", function (event) {
-        let message = event.data;
-        alert(message);
-      });
+      eventSource.addEventListener("connect", function (event) {});
+
       eventSource.addEventListener("apply", function (event) {
         let message = JSON.parse(event.data);
-
-        console.log(message);
         setNotification(message);
+        setAlarm(true);
       });
 
       eventSource.addEventListener("applyY", function (event) {
-        let message = event.data;
-
-        console.log(message);
+        let message = JSON.parse(event.data);
         setNotification(message);
+        setAlarm(true);
       });
+
       eventSource.addEventListener("applyN", function (event) {
         let message = event.data;
-
-        console.log(message);
         setNotification(message);
       });
 
@@ -46,32 +42,38 @@ const Profile = () => {
     }
   };
 
-  useEffect(() => {
-    connect();
-  }, []);
-
   const [notification, setNotification] = useState({});
-
-  let isAlarm =
-    Object.keys(notification).length === 0 &&
-    notification.constructor === Object
-      ? false
-      : true;
+  const [alarm, setAlarm] = useState(false);
 
   const accept = () => {
     call(`/board/projectY/${notification.nid}`, "POST").then((res) => {
       console.log(res);
       setOpen(false);
+      setAlarm(false);
     });
-    isAlarm = false;
   };
   const reject = () => {
     call(`/board/projectN/${notification.nid}`, "POST").then((res) => {
       console.log(res);
       setOpen(false);
+      setAlarm(false);
     });
-    isAlarm = false;
   };
+
+  const moveProjCreate = () => {
+    if (token != null) {
+      navigate("/project/create");
+    } else {
+    }
+  };
+
+  const moveStudyCreate = () => {
+    navigate("/study/create");
+  };
+
+  useEffect(() => {
+    connect();
+  }, []);
 
   return (
     <Sider
@@ -97,8 +99,8 @@ const Profile = () => {
           <a href={`/mypage/${nickname}`}>내 정보</a>
         </Menu.Item>
 
-        <Menu.SubMenu title={<RedBadge status={isAlarm} />}>
-          {isAlarm ? (
+        <Menu.SubMenu title={<RedBadge status={alarm} />}>
+          {alarm ? (
             <Menu.Item onClick={() => setOpen(true)}>
               {notification.content}
             </Menu.Item>
@@ -124,11 +126,11 @@ const Profile = () => {
 
         <Menu.SubMenu title="프로젝트">
           <Menu.Item>현재 프로젝트 </Menu.Item>
-          <Menu.Item>새 프로젝트 생성하기</Menu.Item>
+          <Menu.Item onClick={moveProjCreate}>새 프로젝트 생성하기</Menu.Item>
         </Menu.SubMenu>
         <Menu.SubMenu title="스터디">
           <Menu.Item>현재 스터디 </Menu.Item>
-          <Menu.Item>새 스터디 생성하기</Menu.Item>
+          <Menu.Item onClick={moveStudyCreate}>새 스터디 생성하기</Menu.Item>
         </Menu.SubMenu>
       </Menu>
     </Sider>

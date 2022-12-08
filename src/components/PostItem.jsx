@@ -25,9 +25,6 @@ const PostItem = ({ post }) => {
   const duration = post.startdate ? `${post.startdate} ~ ${post.enddate}` : "";
 
   const apply = () => {
-    console.log("click appliy");
-    console.log(post.pid);
-    console.log(post.hostId);
     call(`/board/project/${post.pid}/${mid}`, "POST", {
       sender: nickname,
       content: `${nickname}이 신청요청을 보냈습니다!`,
@@ -35,6 +32,7 @@ const PostItem = ({ post }) => {
     }).then((res) => {
       console.log(res);
     });
+
     success();
     setOpen(false);
   };
@@ -65,7 +63,7 @@ const PostItem = ({ post }) => {
             type="primary"
             onClick={apply}
             disabled={
-              post.writer === localStorage.getItem("NICKNAME") ? true : false
+              post.hostId == sessionStorage.getItem("MID") ? true : false
             }
           >
             신청하기

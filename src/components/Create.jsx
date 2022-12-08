@@ -4,7 +4,7 @@ import { Button, Form, Radio, Select, Input, DatePicker } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { call } from "../services/ApiService";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const nickname = sessionStorage.getItem("NICKNAME");
 const mid = sessionStorage.getItem("MID");
@@ -57,7 +57,11 @@ const residences = locations.map((loc, idx) => (
 
 const Create = () => {
   const navigate = useNavigate();
-  console.log(nickname);
+
+  const location = useLocation();
+  const path = location.pathname;
+
+  const type = path === "/study/create" ? "STUDY" : "PROJECT";
 
   const onFinish = (fieldsValue) => {
     const rangeValue = fieldsValue["range-picker"];
@@ -68,14 +72,12 @@ const Create = () => {
       category_: fieldsValue["category_"].join("/"),
       nickname: nickname,
       hostId: mid,
-      type: "PROJECT",
+      type: type,
     };
-    console.log(values);
 
     call("/board", "POST", values).then((res) => {
       console.log(res);
-      // const type = "프로젝트";
-      // navigate("/success", { state: { type: type } });
+      navigate(`/success?type=${type}`);
     });
   };
 
@@ -96,7 +98,7 @@ const Create = () => {
         </Form.Item>
         <Form.Item
           name="title"
-          label="프로젝트 방 이름"
+          label="방 이름"
           rules={[
             {
               required: true,
@@ -151,9 +153,13 @@ const Create = () => {
           <Select>{residences}</Select>
         </Form.Item>
 
-        <Form.Item name="range-picker" label="RangePicker" {...rangeConfig}>
-          <RangePicker />
-        </Form.Item>
+        {type === "PROJECT" ? (
+          <Form.Item name="range-picker" label="RangePicker" {...rangeConfig}>
+            <RangePicker />
+          </Form.Item>
+        ) : (
+          ""
+        )}
 
         <Form.Item
           name="introduction"

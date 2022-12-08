@@ -24,6 +24,9 @@ const AppRouter = () => {
           {["/project", "/study"].map((path, index) => (
             <Route path={path} element={<PostList />} key={index} />
           ))}
+          {["/project/create", "/study/create"].map((path, index) => (
+            <Route path={path} element={<Create />} key={index} />
+          ))}
           <Route path="/project/create" element={<Create />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

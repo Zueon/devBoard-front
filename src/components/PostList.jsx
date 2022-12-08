@@ -17,12 +17,14 @@ const PostList = () => {
   const location = useLocation();
   const path = location.pathname;
 
+  const type = path === "/study" ? "STUDY" : "PROJECT";
+
   useEffect(() => {
-    call(`/board?type=PROJECT`, "GET", null).then((res) => {
+    call(`/board?type=${type}`, "GET", null).then((res) => {
       console.log(res);
       setPosts(res.data.data);
     });
-  }, [path]);
+  }, [type]);
 
   const indexOfLast = currentPage * postsPerPage;
   const indexOfFirst = indexOfLast - postsPerPage;
