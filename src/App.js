@@ -1,7 +1,12 @@
 import React from "react";
+import CodeBlock from "./components/CodeBlock";
 
 const App = () => {
-  return <div>App</div>;
+  return (
+    <div>
+      <CodeBlock />
+    </div>
+  );
 };
 
 export default App;

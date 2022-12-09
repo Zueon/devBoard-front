@@ -9,28 +9,6 @@ import { useLocation } from "react-router-dom";
 const { Content } = Layout;
 
 const PostList = () => {
-  const connect = () => {
-    let subscribeUrl = "http://localhost:8080/sub";
-    if (sessionStorage.getItem("ACCESS_TOKEN") != null) {
-      let token = sessionStorage.getItem("ACCESS_TOKEN");
-      let eventSource = new EventSource(subscribeUrl + "?token=" + token);
-
-      eventSource.addEventListener("connect", function (event) {
-        let message = event.data;
-        alert(message);
-      });
-      eventSource.addEventListener("apply", function (event) {
-        let message = event.data;
-        alert(message);
-      });
-
-      eventSource.addEventListener("error", function (event) {
-        eventSource.close();
-      });
-    }
-  };
-
-  connect();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -39,13 +17,14 @@ const PostList = () => {
   const location = useLocation();
   const path = location.pathname;
 
+  const type = path === "/study" ? "STUDY" : "PROJECT";
+
   useEffect(() => {
-    call(`/board?type=PROJECT`, "GET", null).then((res) => {
-      console.log(res.data.data);
+    call(`/board?type=${type}`, "GET", null).then((res) => {
+      console.log(res);
       setPosts(res.data.data);
     });
-  }, [path]);
-  console.log(posts);
+  }, [type]);
 
   const indexOfLast = currentPage * postsPerPage;
   const indexOfFirst = indexOfLast - postsPerPage;

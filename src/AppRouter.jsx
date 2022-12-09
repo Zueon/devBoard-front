@@ -14,6 +14,8 @@ import ProfileGet from "./routes/ProfileGet";
 
 import PostList from "./components/PostList";
 import TestPage from "./components/TestPage";
+import ProfileGet from "./routes/ProfileGet";
+import Workspace from "./routes/Workspace";
 
 const AppRouter = () => {
   return (
@@ -25,7 +27,12 @@ const AppRouter = () => {
           {["/project", "/study"].map((path, index) => (
             <Route path={path} element={<PostList />} key={index} />
           ))}
-          <Route path="/project/create" element={<Create />} />
+          {["/project/create", "/study/create"].map((path, index) => (
+            <Route path={path} element={<Create />} key={index} />
+          ))}
+
+          <Route path="/mypage" element={<ProfileGet />} />
+          <Route path="/myWorkspace" element={<Workspace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/success" element={<Success />} />
