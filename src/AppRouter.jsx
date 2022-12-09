@@ -14,7 +14,6 @@ import ProfileGet from "./routes/ProfileGet";
 
 import PostList from "./components/PostList";
 import TestPage from "./components/TestPage";
-import ProfileGet from "./routes/ProfileGet";
 import Workspace from "./routes/Workspace";
 
 const AppRouter = () => {
