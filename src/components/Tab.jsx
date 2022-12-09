@@ -1,16 +1,19 @@
 import { Tabs } from "antd";
 import React from "react";
+import MembersList from "./MembersList";
+
+const tabBar = ["방 정보", "자료", "채팅"];
 
 const Tab = () => {
   return (
     <Tabs
       type="card"
-      items={new Array(3).fill(null).map((_, i) => {
+      items={tabBar.map((item, i) => {
         const id = String(i + 1);
         return {
-          label: `카테고리 ${id}`,
+          label: item,
           key: id,
-          children: `내용 ${id}`,
+          children: <MembersList />,
         };
       })}
     />

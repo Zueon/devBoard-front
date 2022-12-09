@@ -10,7 +10,6 @@ const { Content } = Layout;
 
 const PostList = () => {
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostsPerPage] = useState(6);
 
@@ -41,32 +40,29 @@ const PostList = () => {
     ));
 
   return (
-    <Layout>
-      <Layout
+    <Layout
+      style={{
+        padding: "0 24px 24px",
+      }}
+    >
+      <Content
+        className="site-layout-background"
         style={{
-          padding: "0 24px 24px",
+          padding: 24,
+          marginTop: 20,
+          minHeight: 280,
         }}
       >
-        <Content
-          className="site-layout-background"
-          style={{
-            padding: 24,
-            marginTop: 20,
-            minHeight: 280,
-          }}
-        >
-          <div className="site-card-wrapper">
-            <Row gutter={[16, 30]}>{postItems}</Row>
-          </div>
-          <Paging
-            itemsCountPerPage={postsPerPage}
-            totalItemsCount={posts.length}
-            setCurrentPage={setCurrentPage}
-            currentPage={currentPage}
-          />
-        </Content>
-      </Layout>
-      <Profile />
+        <div className="site-card-wrapper">
+          <Row gutter={[16, 30]}>{postItems}</Row>
+        </div>
+        <Paging
+          itemsCountPerPage={postsPerPage}
+          totalItemsCount={posts.length}
+          setCurrentPage={setCurrentPage}
+          currentPage={currentPage}
+        />
+      </Content>
     </Layout>
   );
 };

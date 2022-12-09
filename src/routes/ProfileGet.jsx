@@ -70,12 +70,16 @@ const ProfileGet = () => {
                 <span className="ant-form-text">{gender}</span>
               </Form.Item>
 
-              {proj !== "null" ? (
+              {proj && (
                 <Form.Item label="프로젝트">
                   <span className="ant-form-text">{proj["title"]}</span>
                 </Form.Item>
-              ) : (
-                ""
+              )}
+
+              {study && (
+                <Form.Item label="프로젝트">
+                  <span className="ant-form-text">{proj["title"]}</span>
+                </Form.Item>
               )}
 
               <Form.Item
@@ -138,7 +142,6 @@ const ProfileGet = () => {
             </div>
           </div>
         </Content>
-        <UploadButton/>
       </Layout>
     </Layout>
   );

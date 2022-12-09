@@ -75,6 +75,7 @@ const Profile = () => {
   const [note, setNote] = useState({});
   const [alarm, setAlarm] = useState(false);
   const [userInfo, setUserInfo] = useState({});
+  const [post, setPost] = useState({});
 
   const accept = () => {
     call(`/board/projectY/${note.nid}`, "POST").then((res) => {
@@ -104,7 +105,13 @@ const Profile = () => {
   };
 
   const fetchUserData = () => {
-    call("/auth/getMember", "GET").then((res) => setUserInfo(res.data.data));
+    call("/auth/getMember", "GET").then((res) => {
+      setUserInfo(res["data"]["data"]);
+      call(`/getPost?pid=${userInfo["proj"]["pid"]}`, "GET").then((res) => {
+        console.log(res);
+        setPost(res["data"]["data"]);
+      });
+    });
   };
 
   useEffect(() => {
@@ -113,6 +120,7 @@ const Profile = () => {
   }, []);
 
   console.log(userInfo);
+  console.log(post);
   return (
     <>
       {contextHolder}
@@ -182,7 +190,13 @@ const Profile = () => {
           </Modal>
 
           <Menu.SubMenu title="프로젝트">
-            <Menu.Item>현재 프로젝트 </Menu.Item>
+            <Menu.Item
+              onClick={() => {
+                navigate("/myWorkspace", { state: { post: post } });
+              }}
+            >
+              현재 프로젝트{" "}
+            </Menu.Item>
             <Menu.Item onClick={moveProjCreate}>새 프로젝트 생성하기</Menu.Item>
           </Menu.SubMenu>
           <Menu.SubMenu title="스터디">

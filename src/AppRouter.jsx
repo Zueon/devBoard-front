@@ -1,5 +1,5 @@
 import { Layout } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import App from "./App";
 import Nav from "./components/Nav";
@@ -15,6 +15,9 @@ import PostList from "./components/PostList";
 import TestPage from "./components/TestPage";
 import ProfileGet from "./routes/ProfileGet";
 import Workspace from "./routes/Workspace";
+import { call } from "./services/ApiService";
+
+import Post from "./routes/Post";
 
 const AppRouter = () => {
   return (
@@ -24,7 +27,7 @@ const AppRouter = () => {
         <Routes>
           <Route path="/" element={<App />} />
           {["/project", "/study"].map((path, index) => (
-            <Route path={path} element={<PostList />} key={index} />
+            <Route path={path} element={<Post />} key={index} />
           ))}
           {["/project/create", "/study/create"].map((path, index) => (
             <Route path={path} element={<Create />} key={index} />
