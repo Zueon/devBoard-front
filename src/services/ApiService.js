@@ -54,7 +54,6 @@ export const call = async (api, method, request) => {
     }
 
     const response = await axios(options);
-    console.log(response);
     return response;
   } catch (error) {
     console.log(error);

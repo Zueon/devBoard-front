@@ -3,12 +3,15 @@ import { Input,Form, Select, Button,Upload, List} from 'antd';
 import { Option } from 'antd/es/mentions';
 import { locations } from '../AppConfig';
 import { AuthenticatedLink } from '../services/ApiService';
-import { InboxOutlined, CloseOutlined} from '@ant-design/icons';
+import { InboxOutlined, CloseOutlined, UploadOutlined} from '@ant-design/icons';
 import { call } from '../services/ApiService';
 import { useEffect } from 'react';
 
 const { API_BASE_URL} = require('../AppConfig');
 
+
+const ALLOW_FILE_EXTENSION = "pdf"; //확장자는 pdf만 가능
+const FILE_SIZE_MAX_LIMIT = 30*1024*1024; //30MB
 
 // List 관련 설정
 const onChange = (value) => {
@@ -25,20 +28,26 @@ const residences = locations.map((loc, idx) => (
 ));
 
  
-const deletefile = async (filename, idx) => {
-  console.log("삭제");
-  console.log(filename);
-    call(
-      `/file/deleteFile?filename=${filename}`,"DELETE",null
-    ).then((res)=>{
-      console.log(res);
-    });
-    
-}
+
 
 const ProfileDetail = () => {
 
   const [posts, setPosts] = useState([]);
+  const [listener, setListener] = useState(false);
+  const [file, setFile] = useState<File>();
+
+  const deletefile = async (fid,fileName) => {
+    console.log("삭제");
+    console.log(fid);
+      call(
+        `/file/deleteFile`,"DELETE",{fid,fileName}
+      ).then((res)=>{
+        console.log(res);
+        setListener(true);
+      });
+      
+  }
+
   
 
   useEffect(() => {
@@ -46,28 +55,24 @@ const ProfileDetail = () => {
       call(
         `/auth/getMember`,"GET",null
       ).then((res)=>{
-        setPosts(res.data);
-        
+        setPosts(res.data["data"]);
+        setListener(false);
       });
     };
-
     fetchData();
-  }, []);
+
+    
+  }, [listener]);
 
 
+  
+ 
 
-
-  const fileList = posts["infoFiles"].map((item,index) => 
-    <List.Item key={index}>
-      <AuthenticatedLink url={API_BASE_URL+'/file/download?filename='+item.fileName} filename={item.fileName}>
-        {item.fileName}
-      </AuthenticatedLink>
-      <CloseOutlined onClick={()=>deletefile(item.fileName)} />
-      </List.Item>
-      );
-
+  
+ console.log("file", posts["infoFileDTO"]);
  console.log("profileDetail post : ", posts);
 
+ 
 
 
 
@@ -102,7 +107,6 @@ const ProfileDetail = () => {
         <Form.Item label="이메일">
           <span className="ant-form-text">{posts.email}</span>
         </Form.Item>
-
         <Form.Item
         {...formItemLayout}
         name="username"
@@ -113,10 +117,11 @@ const ProfileDetail = () => {
             message: 'Please input your name',
           },
         ]}
-        initialValue={posts.name}
       >
-        <Input value={posts.name}/>
+        {(posts.name || posts.name===null) && <Input defaultValue={posts.name}/>}
       </Form.Item>
+      
+      
 
         <Form.Item label="성별">
           <span className="ant-form-text">{posts.gender}</span>
@@ -145,12 +150,23 @@ const ProfileDetail = () => {
             },
           ]}
         >
-          <Select placeholder="주소" initialvalues={posts.address}>
+          {posts.address &&<Select placeholder="주소" defaultValue={posts.address}>
             {residences}
-          </Select>
+          </Select>}
         </Form.Item>
         <Form.Item label="포토폴리오">
-            <span className="ant-form-text">{fileList}</span>
+            <span className="ant-form-text">
+              {posts["infoFileDTO"] && posts["infoFileDTO"].map((item,index)=>{
+                return(
+                <List.Item key={index}>
+                  <AuthenticatedLink url={API_BASE_URL+'/file/download?filename='+item["fileName"]} filename={item["fileName"]}>
+                    {item["fileName"]}
+                  </AuthenticatedLink>
+                <CloseOutlined onClick={()=>deletefile(item["fid"],item["fileName"])} />
+                </List.Item>
+                );
+              })}
+              </span>
             <Form.Item
           name="upload"
           valuePropName="fileList"
@@ -158,15 +174,16 @@ const ProfileDetail = () => {
           extra=""
         >
         </Form.Item>
-          <Form.Item name="dragger" valuePropName="fileList" getValueFromEvent={normFile} noStyle>
-            <Upload.Dragger name="files" action="/upload.do">
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-              </p>
-              <p className="ant-upload-text">Click or drag file to this area to upload</p>
-              <p className="ant-upload-hint">Support for a single or bulk upload.</p>
-            </Upload.Dragger>
-          </Form.Item>
+        <Form.Item
+        name="upload"
+        label="Upload"
+        valuePropName="fileList"
+        getValueFromEvent={normFile}
+      >
+        <Upload name="logo" action="/upload.do" listType="picture">
+          <Button icon={<UploadOutlined />}>Click to upload</Button>
+        </Upload>
+      </Form.Item>
 
           </Form.Item>
 
