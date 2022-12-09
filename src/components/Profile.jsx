@@ -44,18 +44,19 @@ const Profile = () => {
     if (token !== "null") {
       let eventSource = new EventSource(subscribeUrl + "?token=" + token);
 
-      eventSource.addEventListener("connect", function (event) {
-        alert(event);
-      });
+      eventSource.addEventListener("connect", function (event) {});
 
       eventSource.addEventListener("apply", function (event) {
         let message = JSON.parse(event.data);
+
+        new Notification("알림 도착!", { body: "참가 신청이 도착하였습니다!" });
         setNote(message);
         setAlarm(true);
       });
 
       eventSource.addEventListener("applyY", function (event) {
         let message = JSON.parse(event.data);
+
         setNote(message);
         setAlarm(true);
       });
@@ -73,6 +74,7 @@ const Profile = () => {
 
   const [note, setNote] = useState({});
   const [alarm, setAlarm] = useState(false);
+  const [userInfo, setUserInfo] = useState({});
 
   const accept = () => {
     call(`/board/projectY/${note.nid}`, "POST").then((res) => {
@@ -101,10 +103,16 @@ const Profile = () => {
     navigate("/study/create");
   };
 
+  const fetchUserData = () => {
+    call("/auth/getMember", "GET").then((res) => setUserInfo(res.data.data));
+  };
+
   useEffect(() => {
     connect();
+    fetchUserData();
   }, []);
 
+  console.log(userInfo);
   return (
     <>
       {contextHolder}
@@ -127,8 +135,12 @@ const Profile = () => {
             borderRight: 0,
           }}
         >
-          <Menu.Item>
-            <a href={`/mypage/${nickname}`}>내 정보</a>
+          <Menu.Item
+            onClick={() =>
+              navigate("/mypage", { state: { userInfo: userInfo } })
+            }
+          >
+            내 정보
           </Menu.Item>
 
           <Menu.SubMenu title={<RedBadge status={alarm} />}>
@@ -146,12 +158,25 @@ const Profile = () => {
             open={open}
             onOk={() => setOpen(false)}
             onCancel={() => setOpen(false)}
-            footer={[
-              <Button type="primary" onClick={accept}>
-                승낙하기
-              </Button>,
-              <Button onClick={reject}>거절하기</Button>,
-            ]}
+            footer={
+              note.type === "APPLY"
+                ? [
+                    <Button type="primary" onClick={accept}>
+                      승낙하기
+                    </Button>,
+                    <Button onClick={reject}>거절하기</Button>,
+                  ]
+                : [
+                    <Button
+                      onClick={() => {
+                        setOpen(false);
+                        setAlarm(false);
+                      }}
+                    >
+                      닫기
+                    </Button>,
+                  ]
+            }
           >
             <p>{note.content}</p>
           </Modal>

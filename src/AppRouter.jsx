@@ -30,7 +30,7 @@ const AppRouter = () => {
             <Route path={path} element={<Create />} key={index} />
           ))}
 
-          <Route path="/profile/detail" element={<ProfileGet />} />
+          <Route path="/mypage" element={<ProfileGet />} />
           <Route path="/myWorkspace" element={<Workspace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
