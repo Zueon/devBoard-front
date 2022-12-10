@@ -18,6 +18,7 @@ import Workspace from "./routes/Workspace";
 import { call } from "./services/ApiService";
 
 import Post from "./routes/Post";
+import UploadFiles from "./components/UploadFiles";
 
 const AppRouter = () => {
   return (
@@ -38,7 +39,7 @@ const AppRouter = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/success" element={<Success />} />
-          <Route path="/test" element={<TestPage />} />
+          <Route path="/test" element={<UploadFiles />} />
         </Routes>
       </Layout>
     </BrowserRouter>
