@@ -48,7 +48,9 @@ export const call = async (api, method, request) => {
 
     // 요청 바디가 존재하는 경우에 옵션의 data 속석으로 해당 내용들을 넣어준다.
     if (request) options.data = request;
-
+    console.log(request["flag"]);
+    if (request.flag)
+      options.headers["Content-Type"] = "multipart/form-data; application/json";
     if (accessToken && accessToken !== null) {
       options.headers["Authorization"] = `Bearer ${accessToken}`;
     }

@@ -1,12 +1,14 @@
 import { Content } from "antd/es/layout/layout";
-import React from "react";
+import React,{useState} from "react";
 import { Option } from "antd/es/mentions";
 import { locations } from "../AppConfig";
-import { InboxOutlined } from "@ant-design/icons";
-import { Input, Form, Select, Button, Upload, Layout } from "antd";
+import { CloseOutlined, UploadOutlined } from "@ant-design/icons";
+import { Input, Form, Select, Button, Upload, Layout, List, message} from "antd";
+import { call, AuthenticatedLink } from "../services/ApiService";
 
 import { useLocation } from "react-router-dom";
-import UploadButton from "../components/UploadButton";
+
+const { API_BASE_URL} = require('../AppConfig');
 
 const residences = locations.map((loc, idx) => (
   <Option value={loc} key={idx}>
@@ -14,11 +16,30 @@ const residences = locations.map((loc, idx) => (
   </Option>
 ));
 
+const deletefile = async (fid, fileName) => {
+  console.log("삭제");
+  console.log(fid);
+    call(
+      `/file/deleteFile?filename`,"DELETE",{fid,fileName}
+    ).then((res)=>{
+      console.log(res);
+    });
+    
+}
+
+
+
+
+
+
+
 const ProfileGet = () => {
   const location = useLocation();
   const post = location["state"]["userInfo"];
+  const [files, setFiles] = useState([]);
 
-  const { mid, address, email, auth, name, nickname, proj, study, gender } =
+  const clg = console.log(post);
+  const { mid, address, email, auth, name, nickname, infoFileDTO, proj, study, gender } =
     post;
 
   const formItemLayout = {
@@ -29,17 +50,32 @@ const ProfileGet = () => {
       span: 14,
     },
   };
-  const normFile = (e) => {
-    console.log("Upload event:", e);
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e?.fileList;
-  };
+
+  const fileChangedHandler = event =>{
+    setFiles(event.target.files);
+    
+  }
 
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
+    console.log(files);
+    const formData = new FormData();
+  const data = {
+    "name" : values.name,
+    "address" : values.address,
+    "flag" : true
+  }
+  const blob = new Blob([JSON.stringify(data)], {type:"application/json"})
+  formData.append("data",blob);
+  formData.append("files",files);
+  for(const [key, value] of formData.entries()){
+    console.log(key, value);
+  }
+  
+  const response = call("/auth/update","PUT",{...formData, ...data})
+  console.log(response);
   };
+
+  
 
   return (
     <Layout>
@@ -91,34 +127,21 @@ const ProfileGet = () => {
                   {residences}
                 </Select>
               </Form.Item>
-              <Form.Item label="포토폴리오">
-                <span className="ant-form-text"></span>
-                <Form.Item
-                  name="upload"
-                  valuePropName="fileList"
-                  getValueFromEvent={normFile}
-                  extra=""
-                ></Form.Item>
-                <Form.Item
-                  name="dragger"
-                  valuePropName="fileList"
-                  getValueFromEvent={normFile}
-                  noStyle
-                >
-                  <Upload.Dragger name="files" action="/upload.do">
-                    <p className="ant-upload-drag-icon">
-                      <InboxOutlined />
-                    </p>
-                    <p className="ant-upload-text">
-                      Click or drag file to this area to upload
-                    </p>
-                    <p className="ant-upload-hint">
-                      Support for a single or bulk upload.
-                    </p>
-                  </Upload.Dragger>
-                </Form.Item>
+              <Form.Item label="포토폴리오" name="files">
+                {infoFileDTO && infoFileDTO.map((item,index)=>{
+                  return(
+                    <List.Item key={index} style={{margin:"10px"}}>
+                    <AuthenticatedLink url={API_BASE_URL+'/file/download?filename='+item.fileName} filename={item.fileName}>
+                      {item.fileName}
+                    </AuthenticatedLink>
+                    <CloseOutlined onClick={()=>deletefile(item.fid,item.fileName)} />
+                    </List.Item>
+                  )
+                })}
               </Form.Item>
-
+              <Form.Item>
+                <input type="file" multiple name="files" onChange={fileChangedHandler}/>
+              </Form.Item>
               <Form.Item
                 wrapperCol={{
                   span: 12,
@@ -132,11 +155,9 @@ const ProfileGet = () => {
             </Form>
             <div>
               <a href="/profileDelete">회원 탈퇴</a>
-              <a href="/profileUpdate">회원 수정</a>
             </div>
           </div>
         </Content>
-        <UploadButton/>
       </Layout>
     </Layout>
   );
