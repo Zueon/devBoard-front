@@ -8,22 +8,9 @@ import { useLocation } from "react-router-dom";
 
 const { Content } = Layout;
 
-const PostList = () => {
-  const [posts, setPosts] = useState([]);
+const PostList = ({ posts }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostsPerPage] = useState(6);
-
-  const location = useLocation();
-  const path = location.pathname;
-
-  const type = path === "/study" ? "STUDY" : "PROJECT";
-
-  useEffect(() => {
-    call(`/board?type=${type}`, "GET", null).then((res) => {
-      console.log(res);
-      setPosts(res.data.data);
-    });
-  }, [type]);
 
   const indexOfLast = currentPage * postsPerPage;
   const indexOfFirst = indexOfLast - postsPerPage;
