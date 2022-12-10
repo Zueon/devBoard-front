@@ -29,13 +29,6 @@ const ProfileGet = () => {
       span: 14,
     },
   };
-  const normFile = (e) => {
-    console.log("Upload event:", e);
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e?.fileList;
-  };
 
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
@@ -98,31 +91,7 @@ const ProfileGet = () => {
                 </Select>
               </Form.Item>
               <Form.Item label="포토폴리오">
-                <span className="ant-form-text"></span>
-                <Form.Item
-                  name="upload"
-                  valuePropName="fileList"
-                  getValueFromEvent={normFile}
-                  extra=""
-                ></Form.Item>
-                <Form.Item
-                  name="dragger"
-                  valuePropName="fileList"
-                  getValueFromEvent={normFile}
-                  noStyle
-                >
-                  <Upload.Dragger name="files" action="/upload.do">
-                    <p className="ant-upload-drag-icon">
-                      <InboxOutlined />
-                    </p>
-                    <p className="ant-upload-text">
-                      Click or drag file to this area to upload
-                    </p>
-                    <p className="ant-upload-hint">
-                      Support for a single or bulk upload.
-                    </p>
-                  </Upload.Dragger>
-                </Form.Item>
+                <Input type="file" />
               </Form.Item>
 
               <Form.Item

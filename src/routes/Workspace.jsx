@@ -20,6 +20,7 @@ import { Typography } from "antd";
 import Dragger from "antd/es/upload/Dragger";
 import { UploadOutlined } from "@ant-design/icons";
 import { Button } from "antd";
+import UploadFiles from "../components/UploadFiles";
 const { Content, Footer, Sider } = Layout;
 const { Title } = Typography;
 const fileList = [
@@ -125,37 +126,7 @@ const Workspace = () => {
     key: "tab4",
     children: (
       <>
-        <List
-          itemLayout="horizontal"
-          dataSource={[
-            {
-              title: "Ant Design Title 1",
-            },
-            {
-              title: "Ant Design Title 2",
-            },
-            {
-              title: "Ant Design Title 3",
-            },
-            {
-              title: "Ant Design Title 4",
-            },
-          ]}
-          renderItem={(item) => (
-            <List.Item>
-              <List.Item.Meta
-                title={<a href="https://ant.design">{item.title}</a>}
-                description="Ant Design, a design language for background applications, is refined by Ant UED Team"
-              />
-            </List.Item>
-          )}
-        />
-        <Upload
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-          listType="picture"
-        >
-          <Button icon={<UploadOutlined />}>Upload</Button>
-        </Upload>
+        <UploadFiles />
       </>
     ),
   };

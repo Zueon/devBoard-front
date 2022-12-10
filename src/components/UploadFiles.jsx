@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { Progress, Button, List, Alert } from "antd";
 import { uploadFiles, getFiles } from "../services/upload-files";
+import { UploadOutlined } from "@ant-design/icons";
 
 const UploadFiles = () => {
   const [selectedFiles, setSelectedFiles] = useState(undefined);
@@ -44,47 +46,47 @@ const UploadFiles = () => {
 
   return (
     <div>
-      {currentFile && (
-        <div className="progress">
-          <div
-            className="progress-bar progress-bar-info progress-bar-striped"
-            role="progressbar"
-            aria-valuenow={progress}
-            aria-valuemin="0"
-            aria-valuemax="100"
-            style={{ width: progress + "%" }}
-          >
-            {progress}%
-          </div>
-        </div>
-      )}
-
-      <label className="btn btn-default">
-        <input type="file" onChange={selectFile} />
-      </label>
-
-      <button
-        className="btn btn-success"
-        disabled={!selectedFiles}
-        onClick={upload}
+      {message !== "" ? <Alert message={message}></Alert> : ""}
+      <div
+        style={{
+          height: 500,
+          overflow: "auto",
+          padding: "0 16px",
+        }}
       >
-        Upload
-      </button>
-
-      <div className="alert alert-light" role="alert">
-        {message}
-      </div>
-
-      <div className="card">
-        <div className="card-header">List of Files</div>
-        <ul className="list-group list-group-flush">
+        <List
+          size="large"
+          header={<div>FILE LIST</div>}
+          bordered
+          style={{ overflow: "scroll" }}
+        >
           {fileInfos &&
             fileInfos.map((file, index) => (
-              <li className="list-group-item" key={index}>
+              <List.Item className="list-group-item" key={index}>
                 <a href={file.url}>{file.name}</a>
-              </li>
+              </List.Item>
             ))}
-        </ul>
+        </List>
+      </div>
+      {currentFile && (
+        <div className="progress">
+          <Progress percent={progress} style={{ width: progress + "%" }}>
+            {progress}%
+          </Progress>
+        </div>
+      )}
+      <div style={{ padding: "10px 16px" }}>
+        <Button>
+          <input type="file" onChange={selectFile} />
+        </Button>
+
+        <Button
+          className="btn btn-success"
+          disabled={!selectedFiles}
+          onClick={upload}
+        >
+          Upload
+        </Button>
       </div>
     </div>
   );
