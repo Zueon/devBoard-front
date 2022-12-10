@@ -10,7 +10,7 @@ import {
   Tabs,
   Tag,
   theme,
-  Upload,
+  Result,
 } from "antd";
 import { call } from "../services/ApiService";
 import Tab from "../components/Tab";
@@ -45,11 +45,26 @@ const fileList = [
   },
 ];
 const Workspace = () => {
-  const location = useLocation();
-  const post = location["state"]["post"];
-  console.log("workspace", post);
+  // const location = useLocation();
+  // const post = location["state"]["post"];
+  // console.log("workspace", post);
 
-  let members = post["members"].map((member, idx) => {
+  // let members = {};
+  const [members, setMembers] = useState([]);
+  const [isExist, setIsExist] = useState(false);
+
+  useEffect(() => {
+    call("/myWorkspace?type=PROJECT").then((res) => {
+      if (res.status === 200) {
+        console.log(res);
+        console.log(res.data.data.members);
+        setMembers(res.data.data.members);
+        setIsExist(true);
+      }
+    });
+  }, []);
+
+  let data = members.map((member, idx) => {
     console.log(member);
     return {
       ...member,
@@ -110,7 +125,7 @@ const Workspace = () => {
   const tab1 = {
     label: "INFO",
     key: "tab1",
-    children: <Table columns={columns} dataSource={members} />,
+    children: <Table columns={columns} dataSource={data} />,
   };
 
   const tab2 = {
@@ -137,7 +152,7 @@ const Workspace = () => {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  return (
+  return isExist ? (
     <Layout
       style={{
         margin: "16px 0",
@@ -170,6 +185,13 @@ const Workspace = () => {
         }}
       ></Footer>
     </Layout>
+  ) : (
+    <Result
+      status="500"
+      title="500"
+      subTitle="현재 참가 중인 프로젝트가 존재하지 않습니다!"
+      extra={<Button type="primary">Back Home</Button>}
+    />
   );
 };
 export default Workspace;

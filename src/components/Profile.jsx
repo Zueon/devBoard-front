@@ -2,6 +2,7 @@ import { Card, Menu, Modal, Button, notification, Space } from "antd";
 import Sider from "antd/es/layout/Sider";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../AppConfig";
 
 import { call, signout } from "../services/ApiService";
 import RedBadge from "./RedBadge";
@@ -10,16 +11,62 @@ let token = sessionStorage.getItem("ACCESS_TOKEN");
 
 const Profile = (props) => {
   const {
-    setAlarm,
-    setOpen,
-    reject,
-    open,
     userInfo,
-    alarm,
+
     post,
-    note,
-    accept,
   } = props;
+
+  const [note, setNote] = useState({});
+  const [alarm, setAlarm] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const connect = () => {
+    let subscribeUrl = `${API_BASE_URL}/sub`;
+    if (token !== "null") {
+      let eventSource = new EventSource(subscribeUrl + "?token=" + token);
+
+      eventSource.addEventListener("connect", function (event) {});
+
+      eventSource.addEventListener("apply", function (event) {
+        let message = JSON.parse(event.data);
+
+        new Notification("알림 도착!", { body: "참가 신청이 도착하였습니다!" });
+        setNote(message);
+        setAlarm(true);
+      });
+
+      eventSource.addEventListener("applyY", function (event) {
+        let message = JSON.parse(event.data);
+
+        setNote(message);
+        setAlarm(true);
+      });
+
+      eventSource.addEventListener("applyN", function (event) {
+        let message = event.data;
+        setNote(message);
+      });
+
+      eventSource.addEventListener("error", function (event) {
+        eventSource.close();
+      });
+    }
+  };
+
+  const accept = () => {
+    call(`/board/projectY/${note.nid}`, "POST").then((res) => {
+      console.log(res);
+      setOpen(false);
+      setAlarm(false);
+    });
+  };
+  const reject = () => {
+    call(`/board/projectN/${note.nid}`, "POST").then((res) => {
+      console.log(res);
+      setOpen(false);
+      setAlarm(false);
+    });
+  };
 
   const [api, contextHolder] = notification.useNotification();
   const close = () => {
@@ -66,11 +113,8 @@ const Profile = (props) => {
 
   useEffect(() => {
     console.log(post);
-    call(`/getPost?pid=${post.pid}`).then((res) => {
-      console.log(res);
-      setProj(res.data.data);
-    });
-  }, [post]);
+    connect();
+  }, []);
   console.log(userInfo);
   console.log(post);
 
