@@ -8,8 +8,19 @@ import RedBadge from "./RedBadge";
 const nickname = sessionStorage.getItem("NICKNAME");
 let token = sessionStorage.getItem("ACCESS_TOKEN");
 
-const Profile = () => {
-  const [open, setOpen] = useState(false);
+const Profile = (props) => {
+  const {
+    setAlarm,
+    setOpen,
+    reject,
+    open,
+    userInfo,
+    alarm,
+    post,
+    note,
+    accept,
+  } = props;
+
   const [api, contextHolder] = notification.useNotification();
   const close = () => {
     console.log(
@@ -39,58 +50,6 @@ const Profile = () => {
   };
   const navigate = useNavigate();
 
-  const connect = () => {
-    let subscribeUrl = "http://localhost:8080/sub";
-    if (token !== "null") {
-      let eventSource = new EventSource(subscribeUrl + "?token=" + token);
-
-      eventSource.addEventListener("connect", function (event) {});
-
-      eventSource.addEventListener("apply", function (event) {
-        let message = JSON.parse(event.data);
-
-        new Notification("알림 도착!", { body: "참가 신청이 도착하였습니다!" });
-        setNote(message);
-        setAlarm(true);
-      });
-
-      eventSource.addEventListener("applyY", function (event) {
-        let message = JSON.parse(event.data);
-
-        setNote(message);
-        setAlarm(true);
-      });
-
-      eventSource.addEventListener("applyN", function (event) {
-        let message = event.data;
-        setNote(message);
-      });
-
-      eventSource.addEventListener("error", function (event) {
-        eventSource.close();
-      });
-    }
-  };
-
-  const [note, setNote] = useState({});
-  const [alarm, setAlarm] = useState(false);
-  const [userInfo, setUserInfo] = useState({});
-
-  const accept = () => {
-    call(`/board/projectY/${note.nid}`, "POST").then((res) => {
-      console.log(res);
-      setOpen(false);
-      setAlarm(false);
-    });
-  };
-  const reject = () => {
-    call(`/board/projectN/${note.nid}`, "POST").then((res) => {
-      console.log(res);
-      setOpen(false);
-      setAlarm(false);
-    });
-  };
-
   const moveProjCreate = () => {
     if (token !== "null") {
       navigate("/project/create");
@@ -103,16 +62,18 @@ const Profile = () => {
     navigate("/study/create");
   };
 
-  const fetchUserData = () => {
-    call("/auth/getMember", "GET").then((res) => setUserInfo(res.data.data));
-  };
+  const [proj, setProj] = useState({});
 
   useEffect(() => {
-    connect();
-    fetchUserData();
-  }, []);
-
+    console.log(post);
+    call(`/getPost?pid=${post.pid}`).then((res) => {
+      console.log(res);
+      setProj(res.data.data);
+    });
+  }, [post]);
   console.log(userInfo);
+  console.log(post);
+
   return (
     <>
       {contextHolder}
@@ -182,7 +143,13 @@ const Profile = () => {
           </Modal>
 
           <Menu.SubMenu title="프로젝트">
-            <Menu.Item>현재 프로젝트 </Menu.Item>
+            <Menu.Item
+              onClick={() => {
+                navigate("/myWorkspace", { state: { post: proj } });
+              }}
+            >
+              현재 프로젝트{" "}
+            </Menu.Item>
             <Menu.Item onClick={moveProjCreate}>새 프로젝트 생성하기</Menu.Item>
           </Menu.SubMenu>
           <Menu.SubMenu title="스터디">

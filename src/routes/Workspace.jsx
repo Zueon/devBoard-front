@@ -1,97 +1,195 @@
 import React, { useEffect, useState } from "react";
-import { CrownOutlined, UserOutlined } from "@ant-design/icons";
-import { Breadcrumb, Layout, Menu, theme } from "antd";
+import { CrownOutlined, InboxOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  List,
+  Breadcrumb,
+  Layout,
+  Menu,
+  Space,
+  Table,
+  Tabs,
+  Tag,
+  theme,
+  Upload,
+} from "antd";
 import { call } from "../services/ApiService";
 import Tab from "../components/Tab";
+import MembersList from "../components/MembersList";
+import { useLocation } from "react-router-dom";
+import { Typography } from "antd";
+import Dragger from "antd/es/upload/Dragger";
+import { UploadOutlined } from "@ant-design/icons";
+import { Button } from "antd";
 const { Content, Footer, Sider } = Layout;
-
-// const items2 = [UserOutlined, LaptopOutlined, NotificationOutlined].map(
-//   (icon, index) => {
-//     const key = String(index + 1);
-//     return {
-//       key: `sub${key}`,
-//       icon: React.createElement(icon),
-//       label: `subnav ${key}`,
-//       // children: new Array(4).fill(null).map((_, j) => {
-//       //   const subKey = index * 4 + j + 1;
-//       //   return {
-//       //     key: subKey,
-//       //     label: `option${subKey}`,
-//       //   };
-//       // }),
-//     };
-//   }
-// );
-
+const { Title } = Typography;
+const fileList = [
+  {
+    uid: "0",
+    name: "xxx.png",
+    status: "uploading",
+    percent: 33,
+  },
+  {
+    uid: "-1",
+    name: "yyy.png",
+    status: "done",
+    url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
+    thumbUrl:
+      "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
+  },
+  {
+    uid: "-2",
+    name: "zzz.png",
+    status: "error",
+  },
+];
 const Workspace = () => {
-  const [post, setPost] = useState({});
+  const location = useLocation();
+  const post = location["state"]["post"];
+  console.log("workspace", post);
 
-  useEffect(() => {
-    call(`/myWorkspace?type=PROJECT`, "GET").then((res) => {
-      console.log(res);
-      setPost(res.data.data);
-    });
-  }, []);
-
-  console.log(post);
-
-  const items = post["members"].map((member, idx) => {
-    const icon = member["mid"] === post.hostId ? CrownOutlined : UserOutlined;
+  let members = post["members"].map((member, idx) => {
+    console.log(member);
     return {
-      key: member["mid"],
-      label: member["nickname"],
-      icon: React.createElement(icon),
+      ...member,
+      tags: ["test", "dev"],
     };
   });
+
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      render: (text) => <a>{text}</a>,
+    },
+
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+    },
+    {
+      title: "Tags",
+      key: "tags",
+      dataIndex: "tags",
+      render: (_, { tags }) => (
+        <>
+          {tags.map((tag) => {
+            let color = tag.length > 5 ? "geekblue" : "green";
+            if (tag === "loser") {
+              color = "volcano";
+            }
+            return (
+              <Tag color={color} key={tag}>
+                {tag.toUpperCase()}
+              </Tag>
+            );
+          })}
+        </>
+      ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Space size="middle">
+          <a>Invite {record.name}</a>
+          <a>Delete</a>
+        </Space>
+      ),
+    },
+  ];
+
+  const tab1 = {
+    label: "INFO",
+    key: "tab1",
+    children: <Table columns={columns} dataSource={members} />,
+  };
+
+  const tab2 = {
+    label: "TODO",
+    key: "tab2",
+  };
+  const tab3 = {
+    label: "CHATROOM",
+    key: "tab3",
+  };
+  const tab4 = {
+    label: "ARCHIVE",
+    key: "tab4",
+    children: (
+      <>
+        <List
+          itemLayout="horizontal"
+          dataSource={[
+            {
+              title: "Ant Design Title 1",
+            },
+            {
+              title: "Ant Design Title 2",
+            },
+            {
+              title: "Ant Design Title 3",
+            },
+            {
+              title: "Ant Design Title 4",
+            },
+          ]}
+          renderItem={(item) => (
+            <List.Item>
+              <List.Item.Meta
+                title={<a href="https://ant.design">{item.title}</a>}
+                description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+              />
+            </List.Item>
+          )}
+        />
+        <Upload
+          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+          listType="picture"
+        >
+          <Button icon={<UploadOutlined />}>Upload</Button>
+        </Upload>
+      </>
+    ),
+  };
+
+  const tabs = [tab1, tab2, tab3, tab4];
 
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+
   return (
-    <Layout>
+    <Layout
+      style={{
+        margin: "16px 0",
+      }}
+    >
       <Content
         style={{
           padding: "0 50px",
         }}
       >
-        <Breadcrumb
-          style={{
-            margin: "16px 0",
-          }}
-        >
-          <Breadcrumb.Item>Home</Breadcrumb.Item>
-          <Breadcrumb.Item>List</Breadcrumb.Item>
-          <Breadcrumb.Item>App</Breadcrumb.Item>
-        </Breadcrumb>
         <Layout
           style={{
             padding: "24px 0",
             background: colorBgContainer,
           }}
         >
-          <Sider
-            style={{
-              background: colorBgContainer,
-            }}
-            width={200}
-          >
-            <Menu
-              mode="inline"
-              defaultSelectedKeys={["1"]}
-              defaultOpenKeys={["sub1"]}
-              style={{
-                height: "100%",
-              }}
-              items={items}
-            />
-          </Sider>
           <Content
             style={{
               padding: "0 24px",
               minHeight: 280,
             }}
           >
-            <Tab />
+            <Tabs type="card" items={tabs} />
           </Content>
         </Layout>
       </Content>

@@ -112,6 +112,12 @@ const ProfileGet = () => {
                 </Form.Item>
               )}
 
+              {study && (
+                <Form.Item label="프로젝트">
+                  <span className="ant-form-text">{proj["title"]}</span>
+                </Form.Item>
+              )}
+
               <Form.Item
                 name="address"
                 label="주소"
