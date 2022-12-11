@@ -21,6 +21,7 @@ import Dragger from "antd/es/upload/Dragger";
 import { UploadOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import UploadFiles from "../components/UploadFiles";
+import Chat from "../components/Chat"
 const { Content, Footer, Sider } = Layout;
 const { Title } = Typography;
 const fileList = [
@@ -45,6 +46,7 @@ const fileList = [
   },
 ];
 const Workspace = () => {
+  
   const location = useLocation();
   const post = location["state"]["post"];
   console.log("workspace", post);
@@ -120,6 +122,11 @@ const Workspace = () => {
   const tab3 = {
     label: "CHATROOM",
     key: "tab3",
+    children:(
+      <>
+        <Chat roomNum={post.pid} />
+      </>
+    )
   };
   const tab4 = {
     label: "ARCHIVE",

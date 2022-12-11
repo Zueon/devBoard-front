@@ -3,6 +3,7 @@ import { Col, Layout, Menu, Row } from "antd";
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
+
 const { Header, Content, Sider } = Layout;
 
 const items = [
@@ -36,7 +37,9 @@ const Nav = () => {
 
   return (
     <Header className="header">
-      <div className="logo" />
+      <div className="logo" >
+        <img src={process.env.PUBLIC_URL+"logo.png"} className="logo"/>
+        </div>
       <Menu
         theme="dark"
         mode="horizontal"
