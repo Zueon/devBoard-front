@@ -187,8 +187,8 @@ const Workspace = () => {
     </Layout>
   ) : (
     <Result
-      status="500"
-      title="500"
+      status="404"
+      title="404"
       subTitle="현재 참가 중인 프로젝트가 존재하지 않습니다!"
       extra={<Button type="primary">Back Home</Button>}
     />
