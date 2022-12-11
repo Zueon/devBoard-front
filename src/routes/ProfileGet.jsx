@@ -1,12 +1,13 @@
 import { Content } from "antd/es/layout/layout";
-import React from "react";
+import React, { useState } from "react";
 import { Option } from "antd/es/mentions";
 import { locations } from "../AppConfig";
 import { InboxOutlined } from "@ant-design/icons";
 import { Input, Form, Select, Button, Upload, Layout } from "antd";
-
+import http from "../http-common";
 import { useLocation } from "react-router-dom";
 import UploadButton from "../components/UploadButton";
+import { uploadFiles } from "../services/upload-files";
 
 const residences = locations.map((loc, idx) => (
   <Option value={loc} key={idx}>
@@ -17,6 +18,20 @@ const residences = locations.map((loc, idx) => (
 const ProfileGet = () => {
   const location = useLocation();
   const post = location["state"]["userInfo"];
+
+  const [selectedFiles, setSelectedFiles] = useState(undefined);
+  const [currentFile, setCurrentFile] = useState(undefined);
+
+  const selectFile = (e) => {
+    setSelectedFiles(e.target.files);
+  };
+
+  const upload = () => {
+    let currentFile = selectedFiles[0];
+
+    setCurrentFile(currentFile);
+    uploadFiles(currentFile, (event) => {});
+  };
 
   const { mid, address, email, auth, name, nickname, proj, study, gender } =
     post;
@@ -31,7 +46,14 @@ const ProfileGet = () => {
   };
 
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
+    let formData = new FormData();
+
+    formData.append("file", currentFile);
+    http.post(`/upload?address=${values.address}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   };
 
   return (
@@ -91,7 +113,7 @@ const ProfileGet = () => {
                 </Select>
               </Form.Item>
               <Form.Item label="포토폴리오">
-                <Input type="file" />
+                <Input type="file" onChange={selectFile} />
               </Form.Item>
 
               <Form.Item

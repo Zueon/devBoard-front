@@ -1,4 +1,5 @@
 import { Col, Layout, Menu, Row } from "antd";
+import Typography from "antd/es/typography/Typography";
 
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -37,9 +38,6 @@ const Nav = () => {
 
   return (
     <Header className="header">
-      <div className="logo" >
-        <img src={process.env.PUBLIC_URL+"logo.png"} className="logo"/>
-        </div>
       <Menu
         theme="dark"
         mode="horizontal"

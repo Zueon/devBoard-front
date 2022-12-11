@@ -75,7 +75,7 @@ const Create = () => {
       type: type,
     };
 
-    call("/board", "POST", values).then((res) => {
+    call("/post", "POST", values).then((res) => {
       console.log(res);
       navigate(`/success?type=${type}`);
     });

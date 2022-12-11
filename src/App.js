@@ -1,10 +1,9 @@
 import React from "react";
-import CodeBlock from "./components/CodeBlock";
 
 const App = () => {
   return (
     <div>
-      <CodeBlock />
+      <img src="./index.jpg" alt="" style={{ width: "100%", height: "100%" }} />
     </div>
   );
 };
