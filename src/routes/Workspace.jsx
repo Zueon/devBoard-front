@@ -46,20 +46,14 @@ const fileList = [
   },
 ];
 const Workspace = () => {
-<<<<<<< HEAD
-  
   const location = useLocation();
-  const post = location["state"]["post"];
+  const post = location.state.post;
   console.log("workspace", post);
-=======
-  // const location = useLocation();
-  // const post = location["state"]["post"];
-  // console.log("workspace", post);
->>>>>>> 41cccf41f58f2da74215a990f663b0d4405e4524
 
   // let members = {};
   const [members, setMembers] = useState([]);
   const [isExist, setIsExist] = useState(false);
+  const [pid, setPid] = useState([]);
 
   useEffect(() => {
     call("/myWorkspace?type=PROJECT").then((res) => {
@@ -68,6 +62,9 @@ const Workspace = () => {
         console.log(res.data.data.members);
         setMembers(res.data.data.members);
         setIsExist(true);
+        if(res.data.data.pid !== null){
+          setPid(res.data.data.pid)
+        }
       }
     });
   }, []);
@@ -136,16 +133,21 @@ const Workspace = () => {
     children: <Table columns={columns} dataSource={data} />,
   };
 
-  const tab2 = {
-    label: "TODO",
-    key: "tab2",
-  };
+  // const tab2 = {
+  //   label: "TODO",
+  //   key: "tab2",
+  //   children:(
+  //     <>
+
+  //     </>
+  //   )
+  // };
   const tab3 = {
     label: "CHATROOM",
     key: "tab3",
     children:(
       <>
-        <Chat roomNum={post.pid} />
+        <Chat roomNum={pid}/>
       </>
     )
   };
@@ -159,7 +161,7 @@ const Workspace = () => {
     ),
   };
 
-  const tabs = [tab1, tab2, tab3, tab4];
+  const tabs = [tab1, tab3,tab4];
 
   const {
     token: { colorBgContainer },

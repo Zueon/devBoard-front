@@ -1,148 +1,137 @@
-import React from "react";
-import { useEffect, useState } from "react";
-import "./chat.css";
-
-const Chat=(roomNum)=>{
-    let nickname = sessionStorage.getItem("NICKNAME");
-    const [value,setValue] = useState(null);
-    const [message, setMessage] = useState("");
-
-    const [listening, setListening] = useState(false);
-
-    const getSendMsgBox=(data)=>{
-        let convertTime;
-        let md = data.createdAt.substring(5,10);
-        let tm = data.createdAt.substring(11,16);
-        convertTime = tm + "|" + md;
+import { useCallback, useEffect, useRef, useState } from "react"
+import SockJS from "sockjs-client";
+import Stomp from "stompjs";
+import axios from "axios";
+import "./Chat.css";
+import sendIcon from "./send.svg"
+import { keyboard } from "@testing-library/user-event/dist/keyboard";
 
 
-        return `<div class="sent_msg">
-                <p>${data.msg}</p>
-                <span class="time_date"> ${convertTime} / ${data.sender}</span>
-                </div>`
-    }
-    const getReceiveMsgBox=(data)=>{
-        let convertTime;
-        let md = data.createdAt.substring(5,10);
-        let tm = data.createdAt.substring(11,16);
-        convertTime = tm + "|" + md;
+var reconnect = 0;
 
 
-        return `<div class="sent_msg">
-                <p>${data.msg}</p>
-                <span class="time_date"> ${convertTime} / ${data.sender}</span>
-                </div>`
-    }
+const Chat = (roomNum) => {
+    
+    let user = sessionStorage.getItem("NICKNAME");
 
-    function initMyMessage(data){
-        let chatBox = document.querySelector("#chat-box");
+
+    const [msg, setMsg] = useState('');
+    const [messages, setMessages] = useState([]);
+    const [sender, setSender]= useState(user);
+    const messagesRef = useRef(null);
+    const ws = useRef(null);
+    const sock = useRef(null);
     
     
-        //alert(msgInput.value)
-        let sendBox = document.createElement("div");
-        sendBox.className = "outgoing_msg";
-        
-        sendBox.innerHTML = getSendMsgBox(data);
-        chatBox.append(sendBox);
-    
-        document.documentElement.scrollTop = document.body.scrollHeight;
-    }
-
-    function initYourMessage(data){
-        let chatBox = document.querySelector("#chat-box");
-    
-    
-        //alert(msgInput.value)
-        let receivedBox = document.createElement("div");
-        receivedBox.className = "outgoing_msg";
-        
-        receivedBox.innerHTML = getReceiveMsgBox(data);
-        chatBox.append(receivedBox);
-        document.documentElement.scrollTop = document.body.scrollHeight;
-    }
-
-
-    async function addMessage(){
-
-    
-    
-        let chat = {
-            sender : nickname,
-            roomNum : roomNum.roomNum,
-            msg : message
-        };
-    
-        await fetch("http://localhost:9090/chat",{
-            method:"post",//http post메서드(새로운 데이터를 write)
-            body: JSON.stringify(chat),
-            headers:{
-                "Content-Type":"application/json"
-            }
-        });
-        setListening(true);
-        setMessage("");
-
-    }
 
     useEffect(()=>{
-        
-console.log(nickname);
-console.log(roomNum.roomNum);
-    let eventSource = new EventSource(`http://localhost:9090/chat/roomNum/${roomNum.roomNum}`);
-        
-        eventSource.onopen = event => {
+        async function fetchData(){
+            sock.current = new SockJS('http://localhost:9090/ws-stomp');
+            ws.current = Stomp.over(sock.current);
+            
+        await axios.get('http://localhost:9090/roomNum/'+roomNum.roomNum).then((response)=>{
+            setMessages(response.data);
+         })
         }
-        eventSource.onmessage = event =>{
-            setValue(JSON.parse(event.data));
-            if(value.sender === nickname){
-                initMyMessage(value);
-            }else{
-                initYourMessage(value);
+        fetchData();
+
+
+        
+    },[])
+
+
+    useEffect(()=>{
+        const connect = ws.current.connect({}, function(frame){
+            console.log("실행");
+            
+            ws.current.subscribe("/sub/roomNum/"+roomNum.roomNum, function(msg){
+                console.log('msg :>> ', msg);
+                const recv = JSON.parse(msg.body);
+                recvMessage(recv);
+            })
+        
+        }, function(error){
+            if(reconnect++<=5){
+                setTimeout(function(){
+                    console.log("connection reconnect");
+                    console.log("error",error);
+                    sock.current = new SockJS("http://localhost:9090/ws-stomp",);
+                    ws.current = Stomp.over(sock);
+                    connect();
+                },10*1000);
             }
-            setListening(false);
+        })
+    },[messages])
+
+    useEffect(()=>{
+        if (messagesRef) {
+            messagesRef.current.addEventListener('DOMNodeInserted', event => {
+              const { currentTarget: target } = event;
+              target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
+            });
+          }
+    },[messages])
+
+
+    const saveMessage=(e)=>{
+            setMsg(e.target.value)
+        
+    }
+
+
+    function keydownHandler(e){
+        let data ={
+            sender : sender,
+            msg : msg,
+            roomNum : roomNum.roomNum,
         }
-
-        eventSource.onerror=(error) =>{
-            console.log("SSE For Users error",error);
-            eventSource.close();
+        if(e.keyCode===13 && msg!==''){
+            ws.current.send("/pub/message",{},JSON.stringify(data));
+            setMsg('');
+            
+        }else if(e.keyCode===13){
+            alert("입력하세요");
         }
-},[listening])
+    }
 
+    function clickHandler(e){
+        let data ={
+            sender : sender,
+            msg : msg,
+            roomNum : roomNum.roomNum,
+        }
+            if(msg!==''){
+            ws.current.send("/pub/message",{},JSON.stringify(data))
+            
+            setMsg('');
+        }else{
+            alert("입력하세요");
+        }
+        
+    }
 
-const inputChangeHandler=(e)=>{
-        setMessage(e.target.value);
+    function recvMessage(recv){
+        setMessages(prev=>[...prev, recv]);
+    }
+
     
-}
     
-
-
-return(
-    <div className="container-fluid">
-
-    <div className="row">
-
-      <div className="col-sm-12">
-
-
-        <div id="user_chat_data" className="user_chat_data">
-
-          <div className="container-fluid chat_section" id="chat-box">
-
-          </div>
-
-          <div className="type_msg">
-            <div className="input_msg_write">
-              <input id="chat-outgoing-msg" type="text" className="write_msg" placeholder="Type a message" onChange={inputChangeHandler} />
-              <button id="chat-send" className="msg_send_btn" type="button" onClick={addMessage}><i className="fa fa-paper-plane"
-                  aria-hidden="true"></i></button>
+    
+    return(
+        
+        <div className="App">
+            <div className="chat">
+            <div className="head">ChatBot</div>
+                <div className="messages" ref={messagesRef}>
+                    {messages.map((m, i) => (<div className="message"><div key={i} className={`msg${m.sender!==user ? ' dark' : ''}`}>{m.sender} : {m.msg}</div><br/></div>))}
+                </div>
+                <div className="footer">
+                    <input type="text" value={msg} placeholder="Type here..." onChange={saveMessage} onKeyDown={keydownHandler}/>
+                    <img src={sendIcon} onClick={clickHandler}/>
+                </div>
             </div>
-          </div>
-
         </div>
-      </div>
-    </div>
-  </div>
-)
+        
+    )
 }
-
 export default Chat;
