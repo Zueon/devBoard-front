@@ -182,8 +182,8 @@ const Register = () => {
           ]}
         >
           <Select placeholder="select your gender">
-            <Option value="M">Male</Option>
-            <Option value="F">Female</Option>
+            <Option value="Male">Male</Option>
+            <Option value="Female">Female</Option>
           </Select>
         </Form.Item>
 

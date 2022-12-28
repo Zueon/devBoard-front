@@ -4,6 +4,7 @@ import { call } from "../services/ApiService";
 
 const mid = sessionStorage.getItem("MID");
 const nickname = sessionStorage.getItem("NICKNAME");
+const email = sessionStorage.getItem("EMAIL");
 
 const PostItem = ({ post }) => {
   const [open, setOpen] = useState(false);
@@ -25,10 +26,9 @@ const PostItem = ({ post }) => {
   const duration = post.startdate ? `${post.startdate} ~ ${post.enddate}` : "";
 
   const apply = () => {
-    call(`/board/project/${post.pid}/${mid}`, "POST", {
-      sender: nickname,
-      content: `${nickname}이 신청요청을 보냈습니다!`,
-      type: "APPLY",
+    call(`/apply`, "POST", {
+      pid: post.pid,
+      senderEmail: email,
     }).then((res) => {
       console.log(res);
     });

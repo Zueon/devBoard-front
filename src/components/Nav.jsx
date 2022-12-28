@@ -6,21 +6,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 const { Header, Content, Sider } = Layout;
 
-const items = [
-  {
-    label: "프로젝트",
-    key: "project",
-  },
-
-  {
-    label: "스터디",
-    key: "study",
-  },
-  {
-    label: "로그인",
-    key: "login",
-  },
-];
 const Nav = () => {
   const location = useLocation().pathname;
   const pathname = location.replace("/", "");

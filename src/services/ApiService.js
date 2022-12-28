@@ -3,6 +3,8 @@ import { createRef } from "react";
 const { API_BASE_URL } = require("../AppConfig");
 const ACCESS_TOKEN = "ACCESS_TOKEN";
 const NICKNAME = "NICKNAME";
+const MID = "MID";
+const EMAIL = "EMAIL";
 
 export function AuthenticatedLink({ url, filename, children }) {
   const link = createRef();
@@ -66,15 +68,24 @@ export const call = async (api, method, request) => {
 
 export async function signin(member) {
   const response = await call("/auth/signin", "POST", member);
-  const accessToken = response.data.token;
-  console.log(response);
-  if (accessToken) {
-    sessionStorage.setItem(ACCESS_TOKEN, accessToken);
-    sessionStorage.setItem("NICKNAME", response.data.nickname);
-    sessionStorage.setItem("MID", response.data.mid);
+  const accessToken = response.data.accessToken;
+  const nickname = response.data.nickname;
+  const mid = response.data.mid;
+  const email = response.data.email;
 
-    window.location = "/";
+  if (response.status === 200) {
+    if (accessToken) {
+      sessionStorage.setItem(ACCESS_TOKEN, accessToken);
+      sessionStorage.setItem(NICKNAME, nickname);
+      sessionStorage.setItem(MID, mid);
+      sessionStorage.setItem(EMAIL, email);
+
+      window.location = "/";
+    }
+  } else if (response.status == 400) {
+    alert(response.data.error);
   }
+  console.log(response);
 }
 
 export function signout() {

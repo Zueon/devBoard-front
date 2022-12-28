@@ -1,64 +1,42 @@
 import React, { useEffect, useState } from "react";
-import { CrownOutlined, InboxOutlined, UserOutlined } from "@ant-design/icons";
 import {
-  List,
-  Breadcrumb,
   Layout,
-  Menu,
   Space,
   Table,
   Tabs,
   Tag,
   theme,
   Result,
+  Input,
+  Form,
+  Checkbox,
 } from "antd";
 import { call } from "../services/ApiService";
-import Tab from "../components/Tab";
-import MembersList from "../components/MembersList";
-import { useLocation } from "react-router-dom";
-import { Typography } from "antd";
-import Dragger from "antd/es/upload/Dragger";
-import { UploadOutlined } from "@ant-design/icons";
+
 import { Button } from "antd";
 import UploadFiles from "../components/UploadFiles";
-const { Content, Footer, Sider } = Layout;
-const { Title } = Typography;
-const fileList = [
-  {
-    uid: "0",
-    name: "xxx.png",
-    status: "uploading",
-    percent: 33,
-  },
-  {
-    uid: "-1",
-    name: "yyy.png",
-    status: "done",
-    url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-    thumbUrl:
-      "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-  },
-  {
-    uid: "-2",
-    name: "zzz.png",
-    status: "error",
-  },
-];
-const Workspace = () => {
-  // const location = useLocation();
-  // const post = location["state"]["post"];
-  // console.log("workspace", post);
+import Update from "../components/Update";
+import Chat from "../components/Chat";
 
-  // let members = {};
+const { Content, Footer } = Layout;
+const MID = sessionStorage.getItem("MID");
+
+const Workspace = () => {
   const [members, setMembers] = useState([]);
   const [isExist, setIsExist] = useState(false);
+  const [todos, setTodos] = useState([]);
+  const [pid, setPid] = useState("");
+  const [hostId, setHostId] = useState("");
 
   useEffect(() => {
-    call("/myWorkspace?type=PROJECT").then((res) => {
+    call("/member/").then((res) => {
       if (res.status === 200) {
         console.log(res);
-        console.log(res.data.data.members);
-        setMembers(res.data.data.members);
+
+        setMembers(res.data.data.project.members);
+        setTodos(res.data.data.project.todos);
+        setPid(res.data.data.project.pid);
+        setHostId(res.data.data.project.hostId);
         setIsExist(true);
       }
     });
@@ -68,7 +46,6 @@ const Workspace = () => {
     console.log(member);
     return {
       ...member,
-      tags: ["test", "dev"],
     };
   });
 
@@ -90,26 +67,7 @@ const Workspace = () => {
       dataIndex: "email",
       key: "email",
     },
-    {
-      title: "Tags",
-      key: "tags",
-      dataIndex: "tags",
-      render: (_, { tags }) => (
-        <>
-          {tags.map((tag) => {
-            let color = tag.length > 5 ? "geekblue" : "green";
-            if (tag === "loser") {
-              color = "volcano";
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
-      ),
-    },
+
     {
       title: "Action",
       key: "action",
@@ -122,31 +80,137 @@ const Workspace = () => {
     },
   ];
 
+  let data2 = todos.map((todo, idx) => {
+    console.log(todo);
+    return {
+      ...todo,
+    };
+  });
+
+  const columns2 = [
+    {
+      title: "할 일",
+      dataIndex: "title",
+      key: "title",
+      render: (text) => <a>{text}</a>,
+    },
+
+    {
+      title: "작성자",
+      dataIndex: "creator",
+      key: "creator",
+    },
+    {
+      title: "상태",
+      dataIndex: "isDone",
+      key: "tid",
+      render: (text) => (
+        <>{text === 0 || null ? <Checkbox /> : <Checkbox checked />}</>
+      ),
+    },
+    {
+      title: "Action",
+      key: "tid",
+      dataIndex: "tid",
+      render: (text, record) => (
+        <Space size="middle">
+          <a onClick={removeTodo} name={text}>
+            삭제
+          </a>
+        </Space>
+      ),
+    },
+  ];
+
+  const removeTodo = (e) => {
+    call(`/project/${pid}/todos`, "DELETE", { tid: e.target.name }).then(
+      (res) => {
+        console.log(res);
+        setTodos(res.data.data);
+      }
+    );
+  };
+
   const tab1 = {
     label: "INFO",
     key: "tab1",
     children: <Table columns={columns} dataSource={data} />,
   };
 
+  const onFinish = (values) => {
+    console.log("Success:", values);
+    call(`/project/${pid}/todos`, "POST", { ...values, isDone: 0 }).then(
+      (res) => {
+        console.log(res);
+        setTodos(res.data.data);
+      }
+    );
+  };
   const tab2 = {
     label: "TODO",
     key: "tab2",
+    children: (
+      <>
+        <Form onFinish={onFinish}>
+          <Form.Item
+            name="title"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Input
+              placeholder="할일을 추가하세요"
+              style={{
+                width: "calc(100% - 200px)",
+              }}
+            />
+          </Form.Item>
+          <Button type="primary" htmlType="submit">
+            Add Todo
+          </Button>
+        </Form>
+        <Table columns={columns2} dataSource={data2} />
+      </>
+    ),
   };
+
   const tab3 = {
     label: "CHATROOM",
     key: "tab3",
+    children: (
+      <>
+        <Chat roomNum={pid} />
+      </>
+    ),
   };
   const tab4 = {
     label: "ARCHIVE",
     key: "tab4",
     children: (
       <>
-        <UploadFiles />
+        <UploadFiles pid={pid} />
       </>
     ),
   };
 
-  const tabs = [tab1, tab2, tab3, tab4];
+  const tab5 = {
+    label: "SETTING",
+    key: "tab5",
+    children:
+      hostId == MID ? (
+        <Update pid={pid} />
+      ) : (
+        <Result
+          status="403"
+          title="403"
+          subTitle="프로젝트 수정이 불가능합니다!"
+        />
+      ),
+  };
+
+  const tabs = [tab1, tab2, tab3, tab4, tab5];
 
   const {
     token: { colorBgContainer },

@@ -21,7 +21,7 @@ const Profile = (props) => {
   const [open, setOpen] = useState(false);
 
   const connect = () => {
-    let subscribeUrl = `${API_BASE_URL}/sub`;
+    let subscribeUrl = `${API_BASE_URL}/subscribe`;
     if (token !== "null") {
       let eventSource = new EventSource(subscribeUrl + "?token=" + token);
 
@@ -31,19 +31,14 @@ const Profile = (props) => {
         let message = JSON.parse(event.data);
 
         new Notification("알림 도착!", { body: "참가 신청이 도착하였습니다!" });
+        console.log(message);
         setNote(message);
         setAlarm(true);
       });
 
-      eventSource.addEventListener("applyY", function (event) {
-        let message = JSON.parse(event.data);
-
-        setNote(message);
-        setAlarm(true);
-      });
-
-      eventSource.addEventListener("applyN", function (event) {
+      eventSource.addEventListener("accept", function (event) {
         let message = event.data;
+        console.log(message);
         setNote(message);
       });
 
@@ -54,7 +49,10 @@ const Profile = (props) => {
   };
 
   const accept = () => {
-    call(`/board/projectY/${note.nid}`, "POST").then((res) => {
+    call(`/accept`, "POST", {
+      senderEmail: note.sender,
+      pid: userInfo.project.pid,
+    }).then((res) => {
       console.log(res);
       setOpen(false);
       setAlarm(false);
@@ -129,7 +127,9 @@ const Profile = (props) => {
         <Card
           style={{ width: "100%", height: 300 }}
           bordered={false}
-          title={nickname !== "null" ? nickname : "로그인하세요"}
+          title={
+            userInfo.nickname !== "null" ? userInfo.nickname : "로그인하세요"
+          }
         >
           {token !== "null" ? <Button onClick={signout}>Logout</Button> : ""}
         </Card>
@@ -189,7 +189,7 @@ const Profile = (props) => {
           <Menu.SubMenu title="프로젝트">
             <Menu.Item
               onClick={() => {
-                navigate("/myWorkspace", { state: { post: proj } });
+                navigate("/myWorkspace");
               }}
             >
               현재 프로젝트{" "}

@@ -2,12 +2,12 @@ import { Content } from "antd/es/layout/layout";
 import React, { useState } from "react";
 import { Option } from "antd/es/mentions";
 import { locations } from "../AppConfig";
-import { InboxOutlined } from "@ant-design/icons";
-import { Input, Form, Select, Button, Upload, Layout } from "antd";
+
+import { Input, Form, Select, Button, Layout } from "antd";
 import http from "../http-common";
 import { useLocation } from "react-router-dom";
-import UploadButton from "../components/UploadButton";
-import { uploadFiles } from "../services/upload-files";
+
+const accessToken = sessionStorage.getItem("ACCESS_TOKEN");
 
 const residences = locations.map((loc, idx) => (
   <Option value={loc} key={idx}>
@@ -26,15 +26,7 @@ const ProfileGet = () => {
     setSelectedFiles(e.target.files);
   };
 
-  const upload = () => {
-    let currentFile = selectedFiles[0];
-
-    setCurrentFile(currentFile);
-    uploadFiles(currentFile, (event) => {});
-  };
-
-  const { mid, address, email, auth, name, nickname, proj, study, gender } =
-    post;
+  const { address, email, name, project, study, gender } = post;
 
   const formItemLayout = {
     labelCol: {
@@ -46,10 +38,14 @@ const ProfileGet = () => {
   };
 
   const onFinish = (values) => {
+    let currentFile = selectedFiles[0];
+
+    setCurrentFile(currentFile);
+
     let formData = new FormData();
 
     formData.append("file", currentFile);
-    http.post(`/upload?address=${values.address}`, formData, {
+    http.post(`/member/uploadResume`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -85,15 +81,15 @@ const ProfileGet = () => {
                 <span className="ant-form-text">{gender}</span>
               </Form.Item>
 
-              {proj && (
+              {project && (
                 <Form.Item label="프로젝트">
-                  <span className="ant-form-text">{proj["title"]}</span>
+                  <span className="ant-form-text">{project["title"]}</span>
                 </Form.Item>
               )}
 
               {study && (
                 <Form.Item label="프로젝트">
-                  <span className="ant-form-text">{proj["title"]}</span>
+                  <span className="ant-form-text">{project["title"]}</span>
                 </Form.Item>
               )}
 

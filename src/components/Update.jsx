@@ -5,6 +5,8 @@ import { Content } from "antd/es/layout/layout";
 import { call } from "../services/ApiService";
 
 import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { useState } from "react";
 
 const nickname = sessionStorage.getItem("NICKNAME");
 const mid = sessionStorage.getItem("MID");
@@ -55,7 +57,7 @@ const residences = locations.map((loc, idx) => (
   </Option>
 ));
 
-const Create = () => {
+const Update = ({ pid }) => {
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -81,80 +83,48 @@ const Create = () => {
     });
   };
 
+  useEffect(() => {
+    call(`/project/${pid}`, "GET").then((res) => {
+      console.log(res);
+      setProject(res.data.data);
+    });
+  }, []);
+
+  const [project, setProject] = useState({});
+
   return (
-    <Content style={{ padding: 50 }}>
+    <Content style={{ padding: 20 }}>
       <Form name="validate_other" {...formItemLayout} onFinish={onFinish}>
-        <Form.Item
-          name="writer"
-          label="방장"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-          initialValue={nickname}
-        >
-          <Input disabled />
-        </Form.Item>
-        <Form.Item
-          name="title"
-          label="방 이름"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Input />
+        <Form.Item name="title" label="방 제목">
+          <Input placeholder={project.title} />
         </Form.Item>
 
-        <Form.Item
-          name="public_"
-          label="공개 여부"
-          rules={[
-            {
-              required: true,
-              message: "공개 여부를 설정하세요!",
-            },
-          ]}
-        >
+        <Form.Item name="public_" label="공개 여부">
           <Radio.Group>
             <Radio.Button value="공개">공개</Radio.Button>
-            <Radio.Button value="비공개">비공개</Radio.Button>
+            <Radio.Button value="비공개" checked>
+              비공개
+            </Radio.Button>
           </Radio.Group>
         </Form.Item>
 
-        <Form.Item
-          name="category_"
-          label="태그"
-          rules={[
-            {
-              required: true,
-              message: "태그를 선택하세요",
-              type: "array",
-            },
-          ]}
-        >
-          <Select mode="multiple" placeholder="태그를 선택하세요">
+        <Form.Item name="category_" label="태그">
+          <Select mode="multiple" placeholder={project.category_}>
             {tags}
           </Select>
         </Form.Item>
 
-        <Form.Item
-          name="location_"
-          label="지역"
-          rules={[
-            {
-              required: true,
-              message: "주소를 입력하세요",
-            },
-          ]}
-        >
-          <Select>{residences}</Select>
+        <Form.Item name="location_" label="지역">
+          <Select
+            defaultValue={project.location_}
+            placeholder={project.location_}
+          >
+            {residences}
+          </Select>
         </Form.Item>
 
         {type === "PROJECT" ? (
-          <Form.Item name="range-picker" label="RangePicker" {...rangeConfig}>
+          <Form.Item name="range-picker" label="기간" {...rangeConfig}>
             <RangePicker />
           </Form.Item>
         ) : (
@@ -164,14 +134,15 @@ const Create = () => {
         <Form.Item
           name="introduction"
           label="Intro"
-          rules={[
-            {
-              required: true,
-              message: "Please input Intro",
-            },
-          ]}
+          initialValue={project.introduction}
         >
-          <Input.TextArea showCount maxLength={500} style={{ height: 200 }} />
+          <Input.TextArea
+            showCount
+            maxLength={500}
+            style={{ height: 200 }}
+            initialValue={project.introduction}
+            placeholder={project.introduction}
+          />
         </Form.Item>
 
         <Form.Item
@@ -181,11 +152,21 @@ const Create = () => {
           }}
         >
           <Button type="primary" htmlType="submit">
-            Submit
+            수정
+          </Button>
+          <Button
+            style={{ margin: "10px" }}
+            onClick={() => {
+              call(`/project`, "DELETE").then((res) => {
+                console.log(res);
+              });
+            }}
+          >
+            프로젝트 삭제
           </Button>
         </Form.Item>
       </Form>
     </Content>
   );
 };
-export default Create;
+export default Update;

@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Progress, Button, List, Alert } from "antd";
 import { uploadFiles, getFiles } from "../services/upload-files";
-import { UploadOutlined } from "@ant-design/icons";
 
-const UploadFiles = () => {
+const UploadFiles = ({ pid }) => {
   const [selectedFiles, setSelectedFiles] = useState(undefined);
   const [currentFile, setCurrentFile] = useState(undefined);
   const [progress, setProgress] = useState(0);
@@ -19,12 +18,12 @@ const UploadFiles = () => {
 
     setCurrentFile(currentFile);
 
-    uploadFiles(currentFile, (event) => {
+    uploadFiles(currentFile, pid, (event) => {
       setProgress(Math.round((100 * event.loaded) / event.total));
     })
       .then((res) => {
         setMessage(res.data.message);
-        return getFiles();
+        return getFiles(pid);
       })
       .then((files) => {
         setFileInfos(files.data);
@@ -39,7 +38,7 @@ const UploadFiles = () => {
   };
 
   useEffect(() => {
-    getFiles().then((res) => {
+    getFiles(pid).then((res) => {
       setFileInfos(res.data);
     });
   }, []);
