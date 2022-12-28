@@ -15,6 +15,7 @@ import { call } from "../services/ApiService";
 
 import { Button } from "antd";
 import UploadFiles from "../components/UploadFiles";
+
 import Update from "../components/Update";
 import Chat from "../components/Chat";
 
@@ -24,6 +25,7 @@ const MID = sessionStorage.getItem("MID");
 const Workspace = () => {
   const [members, setMembers] = useState([]);
   const [isExist, setIsExist] = useState(false);
+
   const [todos, setTodos] = useState([]);
   const [pid, setPid] = useState("");
   const [hostId, setHostId] = useState("");
@@ -38,6 +40,9 @@ const Workspace = () => {
         setPid(res.data.data.project.pid);
         setHostId(res.data.data.project.hostId);
         setIsExist(true);
+        if (res.data.data.pid !== null) {
+          setPid(res.data.data.pid);
+        }
       }
     });
   }, []);
